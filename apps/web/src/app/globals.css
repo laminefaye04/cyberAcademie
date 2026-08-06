@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Design system CyberAcademy — CDC §10.1
+ * Fond sombre : bleu nuit #0b1220
+ * Accent cyber : turquoise #4fd1c5
+ * CTA : bleu institutionnel #0b3d91
+ * Typo : Inter (UI), JetBrains Mono (code/terminaux)
+ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+}
+
+@theme {
+  --color-night-950: #0b1220;
+  --color-night-900: #0e1628;
+  --color-night-800: #111a2e;
+  --color-night-700: #16213a;
+  --color-night-600: #1d2a45;
+  --color-cyber-300: #a3ece6;
+  --color-cyber-400: #7de3da;
+  --color-cyber-500: #4fd1c5;
+  --color-cyber-600: #38b2ac;
+  --color-cta-800: #0b2f6e;
+  --color-cta-700: #0b3d91;
+  --color-cta-600: #0f4ca8;
+  --color-cta-500: #1260cf;
+  --color-ink: #e6edf7;
+  --color-ink-dim: #a9b6c9;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+}
+
+@layer base {
+  :root {
+    --background: #0b1220;
+    --foreground: #e6edf7;
+    --card: #111a2e;
+    --card-foreground: #e6edf7;
+    --popover: #0e1628;
+    --popover-foreground: #e6edf7;
+    --primary: #4fd1c5;
+    --primary-foreground: #06212a;
+    --secondary: #1d2a45;
+    --secondary-foreground: #e6edf7;
+    --muted: #1d2a45;
+    --muted-foreground: #8b98ad;
+    --accent: #0f4ca8;
+    --accent-foreground: #e6edf7;
+    --destructive: #f87171;
+    --destructive-foreground: #2a0505;
+    --border: #1d2a45;
+    --input: #1d2a45;
+    --ring: #4fd1c5;
+    --sidebar: #0e1628;
+    --sidebar-foreground: #e6edf7;
+    --sidebar-primary: #4fd1c5;
+    --sidebar-primary-foreground: #06212a;
+    --sidebar-accent: #1d2a45;
+    --sidebar-accent-foreground: #e6edf7;
+    --sidebar-border: #1d2a45;
+    --sidebar-ring: #4fd1c5;
+    --radius: 0.625rem;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  ::selection {
+    background-color: #4fd1c5;
+    color: #06212a;
+  }
+}

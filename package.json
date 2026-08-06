@@ -1,0 +1,19 @@
+{
+  "name": "cyberacademy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CyberAcademy - Plateforme SaaS EdTech d'apprentissage de la cybersécurité offensive",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @cyberacademy/web",
+    "build": "npm run build --workspace @cyberacademy/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

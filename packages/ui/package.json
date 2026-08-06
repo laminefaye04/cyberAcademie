@@ -1,0 +1,7 @@
+{
+  "name": "@cyberacademy/ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Composants partagés shadcn/ui (packages/ui)",
+  "main": "src/index.ts"
+}

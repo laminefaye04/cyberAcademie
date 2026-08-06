@@ -1,0 +1,7 @@
+{
+  "name": "@cyberacademy/database",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Schémas & migrations Supabase (PostgreSQL + pgvector)",
+  "main": "src/index.ts"
+}

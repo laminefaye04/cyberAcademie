@@ -1,0 +1,7 @@
+{
+  "name": "@cyberacademy/ai-core",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Orchestration IA (Ollama), RAG et prompts — modules 1 à 5",
+  "main": "src/index.ts"
+}
