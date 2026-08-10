@@ -7,8 +7,7 @@ import { Card } from "@/components/ui/card";
 import { ChatMessage } from "@/components/mentor/chat-message";
 import { ChatInput } from "@/components/mentor/chat-input";
 import { FaqChips } from "@/components/mentor/faq-chips";
-import { LabAssistant } from "@/components/mentor/lab-assistant";
-import type { ChatMessage as ChatMessageData, MentorMode } from "@/lib/mentor";
+import type { ChatMessage as ChatMessageData } from "@/lib/mentor";
 
 interface ChatWindowProps {
   messages: ChatMessageData[];
@@ -17,9 +16,6 @@ interface ChatWindowProps {
   onInputChange: (value: string) => void;
   onSend: (text: string) => void;
   onFaqSelect: (question: string) => void;
-  onLabReveal: (level: number, text: string) => void;
-  mode: MentorMode;
-  onModeChange: (mode: MentorMode) => void;
 }
 
 export function ChatWindow({
@@ -29,11 +25,9 @@ export function ChatWindow({
   onInputChange,
   onSend,
   onFaqSelect,
-  onLabReveal,
-  mode,
-  onModeChange,
 }: ChatWindowProps) {
   const endRef = useRef<HTMLDivElement>(null);
+  const isFresh = messages.length === 1 && !typing;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,13 +43,11 @@ export function ChatWindow({
         </Avatar>
         <div>
           <p className="text-sm font-semibold">Cyber Mentor</p>
-          <p className="flex items-center gap-1.5 text-xs text-success">
-            <span className="h-1.5 w-1.5 rounded-full bg-success" />
-            En ligne
-          </p>
+          <p className="text-xs text-ink-dim">Ton mentor personnel</p>
         </div>
-        <span className="ml-auto hidden rounded-full border border-border bg-night-800 px-2.5 py-1 text-[10px] text-muted-foreground sm:inline">
-          {mode === "mentor" ? "Mode Mentor actif" : "Mode Lab Assistant actif"}
+        <span className="ml-auto flex items-center gap-1.5 text-xs text-success">
+          <span className="h-1.5 w-1.5 rounded-full bg-success" />
+          En ligne
         </span>
       </div>
 
@@ -64,6 +56,12 @@ export function ChatWindow({
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
+
+          {isFresh && (
+            <div className="pl-12">
+              <FaqChips onSelect={onFaqSelect} />
+            </div>
+          )}
 
           {typing && (
             <div className="flex gap-3">
@@ -83,16 +81,12 @@ export function ChatWindow({
         </div>
       </div>
 
-      <div className="space-y-2 border-t border-border p-3">
-        {mode === "lab" && <LabAssistant onReveal={onLabReveal} />}
-        <FaqChips onSelect={onFaqSelect} />
+      <div className="border-t border-border p-3">
         <ChatInput
           value={input}
           onChange={onInputChange}
           onSend={onSend}
           disabled={typing}
-          mode={mode}
-          onModeChange={onModeChange}
         />
       </div>
     </Card>

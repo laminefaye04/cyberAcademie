@@ -658,6 +658,68 @@ export const WEB_SECURITY_COURSE: Course = {
             )
           ],
         },
+        {
+          id: "web-lecon-13b",
+          title: "Quiz — Le navigateur et ses secrets",
+          type: "quiz",
+          duration: "8 min",
+          blocks: [
+            p(
+              "Vérifie tes acquis sur le côté client du web : HTML, formulaires, cookies et requêtes."
+            ),
+          ],
+          quiz: [
+            {
+              question:
+                "Pourquoi ne doit-on jamais cacher un secret dans le JavaScript ?",
+              options: [
+                "Parce que tout le code client est visible et modifiable",
+                "Parce que le JavaScript ne peut pas stocker de variables",
+                "Parce que les navigateurs interdisent les chaînes",
+                "Parce que le JavaScript chiffre automatiquement",
+              ],
+              answer: 0,
+              explanation:
+                "HTML, CSS et JavaScript sont téléchargés par le navigateur : tout ce qui y vit est public par nature.",
+            },
+            {
+              question: "Avec GET, où sont placées les données d'un formulaire ?",
+              options: [
+                "Dans l'URL, sous forme nom=valeur",
+                "Dans le corps de la requête",
+                "Dans un cookie",
+                "Dans l'en-tête User-Agent",
+              ],
+              answer: 0,
+              explanation:
+                "GET encode les données dans l'adresse. POST les met dans le corps de la requête.",
+            },
+            {
+              question: "L'attribut HttpOnly sur un cookie de session...",
+              options: [
+                "Le rend invisible pour le JavaScript",
+                "Le chiffre de bout en bout",
+                "L'empêche d'expirer",
+                "Le rend plus rapide à envoyer",
+              ],
+              answer: 0,
+              explanation:
+                "HttpOnly empêche le JavaScript (et donc une éventuelle XSS) de lire le cookie.",
+            },
+            {
+              question: "Que fait la Same-Origin Policy ?",
+              options: [
+                "Elle empêche une page de lire les données d'une autre origine",
+                "Elle chiffre toutes les requêtes",
+                "Elle bloque les images",
+                "Elle désactive les cookies",
+              ],
+              answer: 0,
+              explanation:
+                "La SOP est le mur de sécurité fondamental du navigateur : une page ne peut lire les données d'une autre origine sans autorisation.",
+            },
+          ],
+        },
       ],
     },
     {
@@ -1406,7 +1468,7 @@ header     : {"alg":"HS256","typ":"JWT"}     (l'algorithme)\npayload    : {"user
         {
           id: "web-lecon-30",
           title: "Quiz final et bilan du niveau",
-          type: "exercise",
+          type: "quiz",
           duration: "15 min",
           blocks: [
             h("Le moment de vérifier tes acquis"),

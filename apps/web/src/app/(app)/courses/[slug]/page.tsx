@@ -15,6 +15,7 @@ import {
   PlayCircle,
   Star,
   TerminalSquare,
+  XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -394,9 +395,29 @@ export default function CoursePage({ params }: CoursePageProps) {
                           key={questionIndex}
                           className="rounded-md border border-border bg-night-800/50 p-4"
                         >
-                          <p className="font-medium">
-                            {questionIndex + 1}. {question.question}
-                          </p>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="font-medium">
+                              {questionIndex + 1}. {question.question}
+                            </p>
+                            {quizSubmitted && (
+                              <Badge
+                                className={
+                                  selected === question.answer
+                                    ? "bg-success/15 text-success"
+                                    : "bg-danger/15 text-danger"
+                                }
+                              >
+                                {selected === question.answer ? (
+                                  <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
+                                ) : (
+                                  <XCircle className="mr-1 h-3.5 w-3.5" />
+                                )}
+                                {selected === question.answer
+                                  ? "Trouvé"
+                                  : "Faux"}
+                              </Badge>
+                            )}
+                          </div>
                           <div className="mt-3 space-y-2">
                             {question.options.map((option, optionIndex) => {
                               const isCorrect =

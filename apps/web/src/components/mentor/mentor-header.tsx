@@ -1,17 +1,15 @@
 "use client";
 
-import { Bot, MessageSquareText, UserRound } from "lucide-react";
+import { Bot, MessageSquareText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface MentorHeaderProps {
   onOpenConversations: () => void;
-  onOpenProfile: () => void;
 }
 
 export function MentorHeader({
   onOpenConversations,
-  onOpenProfile,
 }: MentorHeaderProps) {
   return (
     <div className="flex flex-wrap items-center gap-3 px-4 pt-4 sm:px-6 lg:px-4">
@@ -46,15 +44,6 @@ export function MentorHeader({
         >
           <MessageSquareText className="h-4 w-4" />
           Conversations
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="border-border text-ink-dim xl:hidden"
-          onClick={onOpenProfile}
-        >
-          <UserRound className="h-4 w-4" />
-          Profil
         </Button>
       </div>
     </div>

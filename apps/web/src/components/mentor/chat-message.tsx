@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Bot, Lightbulb } from "lucide-react";
+import { Bot } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { ChatMessage as ChatMessageData } from "@/lib/mentor";
 import { DEMO_USER } from "@/lib/mock";
@@ -76,20 +76,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
             <p className="text-ink-dim">{message.handshake.conclusion}</p>
 
             <MiniQuiz quiz={message.handshake.quiz} />
-          </div>
-        )}
-
-        {message.labHint && (
-          <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
-            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" />
-            <div>
-              <p className="mb-0.5 font-semibold">
-                {message.labHint.level === 4
-                  ? "Solution révélée"
-                  : `Indice ${message.labHint.level}/3`}
-              </p>
-              <p className="text-warning/90">{message.labHint.text}</p>
-            </div>
           </div>
         )}
       </div>

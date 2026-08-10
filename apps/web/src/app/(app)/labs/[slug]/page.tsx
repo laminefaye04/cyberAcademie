@@ -15,6 +15,7 @@ import {
   FlaskConical,
   Gamepad2,
   Globe,
+  HelpCircle,
   Lightbulb,
   Lock,
   Play,
@@ -182,7 +183,10 @@ const COMMANDS: Record<
     const path = args.join(" ");
     if (
       path.includes("flag.txt") &&
-      (lab.slug === "find-grep" || lab.slug === "terminal-navigation")
+      (lab.slug === "find-grep" ||
+        lab.slug === "terminal-navigation" ||
+        lab.slug === "system-info" ||
+        lab.slug === "file-explorer")
     ) {
       return {
         lines: [
@@ -319,6 +323,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
   const [flag, setFlag] = useState("");
   const [flagResult, setFlagResult] = useState<"success" | "error" | null>(null);
   const [copied, setCopied] = useState(false);
+  const [whyOpen, setWhyOpen] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   const startedAt = useRef(Date.now());
@@ -416,6 +421,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
     setSolved(false);
     setHintsUsed(0);
     setHints([]);
+    setWhyOpen(false);
     setFlag("");
     setFlagResult(null);
     startedAt.current = Date.now();
@@ -424,6 +430,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const ss = String(elapsed % 60).padStart(2, "0");
+  const commandsRun = output.filter((line) => line.kind === "command").length;
   const score = Math.max(0, 100 - hintsUsed * 15 - Math.floor(elapsed / 60) * 2);
   const bonusXp = Math.round((lab.xp * modeConfig.xpBonus) / 100);
   const totalXp = lab.xp + bonusXp;
@@ -979,32 +986,80 @@ function NativeLabView({ lab }: { lab: Lab }) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Lightbulb className="h-4 w-4 text-cyber-500" />
-                IA Lab Assistant
+                Besoin d'aide ?
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-md border border-border bg-night-800/60 px-2.5 py-2">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Objectif
+                  </p>
+                  <p
+                    className="mt-0.5 truncate text-xs font-medium text-ink"
+                    title={lab.objectives[0]}
+                  >
+                    {lab.objectives[0]}
+                  </p>
+                </div>
+                <div className="rounded-md border border-border bg-night-800/60 px-2.5 py-2">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Étapes validées
+                  </p>
+                  <p className="mt-0.5 font-mono text-sm font-medium text-cyber-400">
+                    {currentStep}/{steps}
+                  </p>
+                </div>
+                <div className="rounded-md border border-border bg-night-800/60 px-2.5 py-2">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Commandes exécutées
+                  </p>
+                  <p className="mt-0.5 font-mono text-sm font-medium text-ink">
+                    {commandsRun}
+                  </p>
+                </div>
+                <div className="rounded-md border border-border bg-night-800/60 px-2.5 py-2">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Indices utilisés
+                  </p>
+                  <p className="mt-0.5 font-mono text-sm font-medium text-ink">
+                    {hintsUsed}/{maxHints}
+                  </p>
+                </div>
+              </div>
+
               <p className="text-sm text-ink-dim">
                 {modeConfig.hints === 0
                   ? "Mode Expert : aucun indice disponible. À toi de prouver ta maîtrise."
                   : `Mode ${modeConfig.label} : ${maxHints} indices, du plus général au plus précis.`}
               </p>
-              <Button
-                onClick={useHint}
-                variant="outline"
-                disabled={modeConfig.hints === 0}
-                className="w-full border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10"
-              >
-                <Lightbulb className="mr-2 h-4 w-4" />
-                {modeConfig.hints === 0 ? (
-                  <>
-                    <Lock className="mr-2 h-4 w-4" /> Indices désactivés
-                  </>
-                ) : (
-                  <>
-                    Demander un indice ({hintsUsed}/{maxHints})
-                  </>
-                )}
-              </Button>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button
+                  onClick={useHint}
+                  variant="outline"
+                  disabled={modeConfig.hints === 0}
+                  className="border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10"
+                >
+                  <Lightbulb className="mr-2 h-4 w-4" />
+                  {modeConfig.hints === 0 ? (
+                    <>
+                      <Lock className="mr-2 h-4 w-4" /> Indices désactivés
+                    </>
+                  ) : (
+                    <>Indice {Math.min(hintsUsed + 1, maxHints)}</>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => setWhyOpen((open) => !open)}
+                  variant="outline"
+                  className="border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10"
+                >
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Pourquoi ?
+                </Button>
+              </div>
+
               <AnimatePresence>
                 {hints.map((hint, index) => (
                   <motion.div
@@ -1016,6 +1071,22 @@ function NativeLabView({ lab }: { lab: Lab }) {
                     Indice {index + 1} : {hint}
                   </motion.div>
                 ))}
+
+                {whyOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="rounded-md border border-cyber-500/30 bg-cyber-500/10 p-3 text-sm"
+                  >
+                    <p className="mb-1 flex items-center gap-1.5 font-semibold text-cyber-400">
+                      <HelpCircle className="h-3.5 w-3.5" />
+                      Pourquoi ce lab ?
+                    </p>
+                    <p className="text-ink-dim">{lab.why}</p>
+                    <p className="mt-2 text-ink-dim">{lab.ia}</p>
+                  </motion.div>
+                )}
               </AnimatePresence>
             </CardContent>
           </Card>

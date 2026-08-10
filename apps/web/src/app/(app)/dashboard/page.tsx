@@ -22,10 +22,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { DEMO_USER, AI_RECOMMENDATIONS, XP_HISTORY, WEEKLY_STATS } from "@/lib/mock";
+import { MENTOR_WEAKNESSES } from "@/lib/mentor";
 import { BADGES } from "@/lib/badges";
 import { V1_LEVELS } from "@/lib/roadmap";
 import { MentorPanel } from "@/components/mentor-panel";
 import { LABS } from "@/lib/labs";
+import { cn } from "@/lib/utils";
 import {
   getNextRecommendedActivity,
   type LearningPathItem,
@@ -222,6 +224,53 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* ⭐ Coach — Ta priorité */}
+      <Card className="border-cyber-500/40 bg-cyber-500/[0.04]">
+        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-cyber-500/40 bg-cyber-500/10">
+              <Sparkles className="h-5 w-5 text-cyber-500" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-medium uppercase tracking-wide text-cyber-400">
+                  Coach — Ta priorité
+                </p>
+                <Badge className="bg-warning/15 text-warning">À renforcer</Badge>
+              </div>
+              <p className="mt-1 font-semibold">
+                Revoir {MENTOR_WEAKNESSES[0].label} — tu as obtenu{" "}
+                {MENTOR_WEAKNESSES[0].score}% aux derniers exercices
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {MENTOR_WEAKNESSES.map((weakness) => (
+                  <Badge
+                    key={weakness.topic}
+                    variant="outline"
+                    className={cn(
+                      "border-border text-muted-foreground",
+                      weakness.topic === MENTOR_WEAKNESSES[0].topic &&
+                        "border-cyber-500/40 text-cyber-400"
+                    )}
+                  >
+                    {weakness.label} · {weakness.score}%
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+          <Button
+            asChild
+            size="sm"
+            className="shrink-0 bg-cta-700 text-white hover:bg-cta-600"
+          >
+            <Link href="/courses/networking">
+              Commencer <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* ⭐ Stats hebdomadaires */}
       <Card className="border-cyber-500/40">

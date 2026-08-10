@@ -1080,6 +1080,51 @@ export const LINUX_FUNDAMENTALS_COURSE: Course = {
             )
           ]
         },
+        {
+          id: "linux-lecon-26b",
+          title: "Quiz — Gestion système",
+          type: "quiz",
+          duration: "8 min",
+          blocks: [
+            p(
+              "Un point d'étape sur le réseau local, les utilisateurs et les scripts avant de passer à la mise en pratique."
+            ),
+          ],
+          quiz: [
+            {
+              question: "Quelle commande affiche les adresses IP de la machine ?",
+              options: ["ip a", "cat --ip", "pwd -i", "whoami --net"],
+              answer: 0,
+              explanation:
+                "ip a (address) affiche les interfaces et leurs adresses IP. C'est le premier réflexe réseau sur une machine.",
+            },
+            {
+              question: "À quoi sert le bit setuid (s) sur un binaire ?",
+              options: [
+                "Il exécute le binaire avec les droits du propriétaire",
+                "Il chiffre le fichier",
+                "Il cache le fichier",
+                "Il interdit l'exécution",
+              ],
+              answer: 0,
+              explanation:
+                "Le setuid exécute le programme avec les droits du propriétaire du fichier (souvent root) : une mine d'or et de danger.",
+            },
+            {
+              question:
+                "Quelle commande Bash transforme la sortie d'une commande en variable ?",
+              options: [
+                "$(commande)",
+                "<(commande)",
+                ">>(commande)",
+                "{(commande)}",
+              ],
+              answer: 0,
+              explanation:
+                "$(commande) exécute la commande et la remplace par sa sortie : la base de tout script utile.",
+            },
+          ],
+        },
       ],
     },
     {

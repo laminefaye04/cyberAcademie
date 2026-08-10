@@ -120,19 +120,14 @@ function computeStatuses(
   activities: ActivityCardData[]
 ): Map<string, ActivityStatus> {
   const map = new Map<string, ActivityStatus>();
-  let sawIncomplete = false;
   for (const activity of activities) {
-    const completed = isActivityCompleted(activity);
-    if (completed) {
+    if (isActivityCompleted(activity)) {
       map.set(activity.id, "completed");
-    } else if (sawIncomplete) {
-      map.set(activity.id, "locked");
-    } else {
-      const started =
-        activity.host === "external" && isExternalLabStarted(activity.id);
-      map.set(activity.id, started ? "in-progress" : "available");
-      sawIncomplete = true;
+      continue;
     }
+    const started =
+      activity.host === "external" && isExternalLabStarted(activity.id);
+    map.set(activity.id, started ? "in-progress" : "available");
   }
   return map;
 }

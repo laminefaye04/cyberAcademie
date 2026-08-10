@@ -1649,6 +1649,46 @@ for port in ports_ouverts:
             )
           ],
         },
+        {
+          id: "py-lecon-25b",
+          title: "Quiz — Python pour l'automatisation",
+          type: "quiz",
+          duration: "8 min",
+          blocks: [
+            p(
+              "Un point d'étape sur les sockets et l'automatisation avant les outils du quotidien."
+            ),
+          ],
+          quiz: [
+            {
+              question: "Quel module Python permet de créer une connexion TCP ?",
+              options: ["socket", "network", "tcp", "http"],
+              answer: 0,
+              explanation:
+                "Le module socket fournit les sockets réseau : la base pour écrire ses propres outils de connexion et de scan.",
+            },
+            {
+              question:
+                "Quelle méthode de socket dit si un port est ouvert sans lever d'exception ?",
+              options: ["connect_ex", "connect_try", "test_connect", "open"],
+              answer: 0,
+              explanation:
+                "connect_ex renvoie un code de retour au lieu de lever une exception : idéal pour scanner rapidement.",
+            },
+            {
+              question: "À quoi sert sys.argv dans un script Python ?",
+              options: [
+                "À récupérer les arguments de la ligne de commande",
+                "À vider la mémoire",
+                "À afficher les erreurs",
+                "À fermer le programme",
+              ],
+              answer: 0,
+              explanation:
+                "sys.argv est la liste des arguments passés au script : il rend ton outil réutilisable sur n'importe quelle cible autorisée.",
+            },
+          ],
+        },
       ],
     },
     {

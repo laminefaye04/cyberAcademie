@@ -2,8 +2,6 @@ import { DEMO_USER } from "./mock";
 import { getCareerProgressPct, getRankTitle } from "./progress";
 import { CAREER_GOAL } from "./progress";
 
-export type MentorMode = "mentor" | "lab";
-
 export interface MiniQuiz {
   question: string;
   options: string[];
@@ -25,14 +23,6 @@ export interface HandshakeReply {
   quiz: MiniQuiz;
 }
 
-export interface LabGuide {
-  id: string;
-  title: string;
-  objective: string;
-  hints: [string, string, string];
-  solution: string;
-}
-
 export interface MentorReply {
   content?: string;
   handshake?: HandshakeReply;
@@ -43,7 +33,6 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content?: string;
   handshake?: HandshakeReply;
-  labHint?: { level: number; text: string };
 }
 
 export interface MentorWeakness {
@@ -79,54 +68,23 @@ export const MENTOR_WEAKNESSES: MentorWeakness[] = [
 ];
 
 export const MENTOR_CONVERSATIONS: MentorConversation[] = [
-  { id: "c1", title: "Explique-moi le triple handshake TCP", time: "Il y a 2 min" },
-  { id: "c2", title: "Différence XSS stockée et réfléchie", time: "Il y a 1 h" },
+  { id: "c1", title: "Triple handshake TCP", time: "Il y a 2 min" },
+  { id: "c2", title: "XSS stockée vs réfléchie", time: "Il y a 1 h" },
   { id: "c3", title: "Pourquoi Linux est important ?", time: "Hier" },
-  { id: "c4", title: "Aide sur le lab Find & grep", time: "2 jours" },
-  { id: "c5", title: "Qu'est-ce que le DNS ?", time: "3 jours" },
+  { id: "c4", title: "Qu'est-ce que le DNS ?", time: "2 jours" },
+  { id: "c5", title: "Qu'est-ce que le port 443 ?", time: "3 jours" },
 ];
 
 export const MENTOR_FAQS = [
-  "Qu'est-ce que le port 443 ?",
-  "Explique-moi DNS",
+  "Explique-moi le triple handshake TCP",
+  "Explique-moi le DNS simplement",
   "Différence GET et POST",
   "Qu'est-ce qu'une vulnérabilité ?",
-  "Aide sur un lab",
+  "Pourquoi Linux est important ?",
 ];
 
-export type QuickActionId = "explain" | "lab" | "weaknesses" | "next";
-
-export interface QuickAction {
-  id: QuickActionId;
-  title: string;
-  description: string;
-}
-
-export const QUICK_ACTIONS: QuickAction[] = [
-  {
-    id: "explain",
-    title: "Expliquer un concept",
-    description: "Obtenir une explication claire",
-  },
-  {
-    id: "lab",
-    title: "M'aider sur un lab",
-    description: "Obtenir un indice sans spoiler",
-  },
-  {
-    id: "weaknesses",
-    title: "Analyser mes faiblesses",
-    description: "Voir mes points à améliorer",
-  },
-  {
-    id: "next",
-    title: "Voir ma prochaine étape",
-    description: "Recommandation personnalisée",
-  },
-];
-
-export const DAILY_TIP =
-  "La pratique régulière est la clé. Même 30 minutes par jour peuvent faire une grande différence !";
+export const MENTOR_GREETING =
+  "Bonjour ! Tu veux travailler sur quoi aujourd'hui ?";
 
 export const HANDSHAKE_REPLY: HandshakeReply = {
   intro:
@@ -169,33 +127,6 @@ export const HANDSHAKE_REPLY: HandshakeReply = {
     answerIndex: 0,
     explanation:
       "Le paquet SYN du client initialise la connexion et embarque le numéro de séquence de départ (ISN). C'est lui qui déclenche le handshake.",
-  },
-};
-
-export const LAB_GUIDES: Record<string, LabGuide> = {
-  "find-grep": {
-    id: "find-grep",
-    title: "find & grep",
-    objective: "Localiser le fichier flag.txt et en extraire le contenu.",
-    hints: [
-      "Tu sais que tu cherches un fichier précis. Quelle commande Linux permet de rechercher des fichiers dans une arborescence ?",
-      "Essaie de réfléchir à la commande find : on peut filtrer par nom avec l'option -name.",
-      "Tu peux utiliser : find / -name flag.txt 2>/dev/null. Ensuite, comment afficher son contenu ?",
-    ],
-    solution:
-      "Solution complète : find / -name flag.txt 2>/dev/null, puis cat <chemin/trouvé>/flag.txt pour lire le flag.",
-  },
-  "tcpdump-capture": {
-    id: "tcpdump-capture",
-    title: "Capture TCP",
-    objective: "Capturer le trafic et analyser le handshake TCP avec tcpdump.",
-    hints: [
-      "Toute analyse réseau commence par identifier la bonne interface. Quelle commande liste les interfaces réseau ?",
-      "Pense à tcpdump : l'option -i choisit l'interface et -w écrit le trafic dans un fichier .pcap.",
-      "Tu peux utiliser : sudo tcpdump -i eth0 -w capture.pcap, puis analyser avec tcpdump -r capture.pcap.",
-    ],
-    solution:
-      "Solution complète : sudo tcpdump -i eth0 -w capture.pcap pour capturer, puis tcpdump -r capture.pcap pour relire les paquets et extraire le flag transmis en clair.",
   },
 };
 
@@ -262,7 +193,7 @@ Tu découvriras les 10 principales (OWASP Top 10) au niveau 5 de ton parcours. C
 
 const FALLBACK_MENTOR = `Je préfère te guider vers un angle précis, ${DEMO_USER.pseudo}. Tes points faibles actuels sont TCP/IP, SSRF et XXE.
 
-Tu peux me demander, par exemple : « Explique-moi le triple handshake TCP », « Différence GET et POST », « Qu'est-ce que le DNS ? », ou activer le Mode Lab Assistant si tu es bloqué sur un lab.`;
+Tu peux me demander, par exemple : « Explique-moi le triple handshake TCP », « Différence GET et POST », « Qu'est-ce que le DNS ? », ou « Pourquoi Linux est important ? ».`;
 
 export function getMentorReply(raw: string): MentorReply {
   const t = raw
@@ -289,28 +220,4 @@ export function getMentorReply(raw: string): MentorReply {
   if (t.includes("vulnerabilite") || t.includes("faille")) return { content: VULN_REPLY };
   if (t.includes("linux")) return { content: LINUX_REPLY };
   return { content: FALLBACK_MENTOR };
-}
-
-export const LAB_MODE_INTRO = `Mode Lab Assistant activé, ${DEMO_USER.pseudo}.
-
-Je suis là pour te guider sans te donner la solution d'un coup. Choisis ton lab, puis révèle les indices un par un. Décris-moi aussi précisément où tu es bloqué, et je t'orienterai.`;
-
-export function getLabReply(raw: string): MentorReply {
-  const t = raw.toLowerCase();
-  if (t.includes("bloque") || t.includes("solution") || t.includes("indice")) {
-    return {
-      content:
-        "Pas de panique. Prends une étape à la fois : commence par l'indice 1 ci-dessous, réfléchis, puis révèle le suivant seulement si nécessaire. La solution n'est jamais la meilleure façon d'apprendre.",
-    };
-  }
-  if (t.includes("find") || t.includes("grep") || t.includes("fichier")) {
-    return {
-      content:
-        "Bonne intuition. Indice 1 : quelle commande recherche des fichiers par nom dans toute l'arborescence ? Si tu es sûr(e), essaie de l'exécuter avec l'option -name.",
-    };
-  }
-  return {
-    content:
-      "Je suis en Mode Lab Assistant : décris ton blocage précis (étape, commande, erreur) et je t'aiderai par indices progressifs. Tu peux aussi utiliser les boutons d'indices ci-dessous.",
-  };
 }
