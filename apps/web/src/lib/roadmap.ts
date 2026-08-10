@@ -212,3 +212,11 @@ export const TOTAL_ROADMAP_XP = ROADMAP_LEVELS.reduce(
   (sum, level) => sum + level.xp,
   0
 );
+
+/**
+ * Périmètre V1 : seuls les 5 premiers niveaux sont visibles
+ * (Computer Fundamentals → Introduction to Web Security).
+ * Les niveaux 5-11 restent dans le code mais hors roadmap V1.
+ */
+export const V1_LEVELS = ROADMAP_LEVELS.slice(0, 5);
+export const V1_LEVEL_IDS = new Set(V1_LEVELS.map((level) => level.id));

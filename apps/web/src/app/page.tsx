@@ -31,48 +31,6 @@ const STATS = [
   { value: "4 820", label: "apprenants" },
 ];
 
-const PLANS = [
-  {
-    name: "Freemium",
-    price: "Gratuit",
-    period: "",
-    features: [
-      "Niveaux 0-1 complets",
-      "Cyber Mentor IA (accès limité)",
-      "Classement communautaire",
-    ],
-    cta: "Commencer",
-    highlight: false,
-  },
-  {
-    name: "Premium Étudiant",
-    price: "9 000",
-    period: "– 12 000 FCFA / mois",
-    features: [
-      "Roadmap complète",
-      "Labs illimités",
-      "IA Coach personnalisé",
-      "Portfolio cyber public",
-      "Tarif réduit sur justificatif",
-    ],
-    cta: "Choisir Premium Étudiant",
-    highlight: true,
-  },
-  {
-    name: "Premium Pro",
-    price: "20 000",
-    period: "– 25 000 FCFA / mois",
-    features: [
-      "Niveaux avancés (AD, Red Team, Cloud)",
-      "IA Career Advisor",
-      "Certifications internes",
-      "Support prioritaire",
-    ],
-    cta: "Choisir Premium Pro",
-    highlight: false,
-  },
-];
-
 const TRUST_LOGOS = ["TryHackMe", "HTB", "Root-Me", "PortSwigger", "Udemy"];
 
 export default function HomePage() {
@@ -474,86 +432,6 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </motion.div>
-          </div>
-        </section>
-
-        {/* PRICING */}
-        <section id="pricing" className="scroll-mt-20 py-16">
-          <div className="mx-auto max-w-6xl px-4">
-            <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold sm:text-4xl">
-                Des tarifs adaptés à chaque profil
-              </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-ink-dim">
-                Commencez gratuitement, évoluez vers le premium quand vous êtes
-                prêt. Offre B2B pour les écoles et entreprises.
-              </p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {PLANS.map((plan) => (
-                <motion.div
-                  key={plan.name}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                >
-                  <Card
-                    className={
-                      plan.highlight
-                        ? "h-full border-cyber-500/50 shadow-[0_0_30px_rgba(79,209,197,0.15)]"
-                        : "h-full"
-                    }
-                  >
-                    <CardContent className="flex h-full flex-col p-6">
-                      {plan.highlight && (
-                        <Badge className="mb-3 w-fit bg-cyber-500 text-primary-foreground">
-                          Recommandé
-                        </Badge>
-                      )}
-                      <h3 className="text-lg font-semibold">{plan.name}</h3>
-                      <p className="mt-3 text-3xl font-bold text-cyber-500">
-                        {plan.price}
-                        <span className="text-sm font-normal text-ink-dim">
-                          {plan.period}
-                        </span>
-                      </p>
-                      <ul className="mt-6 flex-1 space-y-2.5">
-                        {plan.features.map((feature) => (
-                          <li
-                            key={feature}
-                            className="flex items-start gap-2 text-sm text-ink-dim"
-                          >
-                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyber-500" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                      <Button
-                        asChild
-                        variant={plan.highlight ? "default" : "outline"}
-                        className={
-                          plan.highlight
-                            ? "mt-6 w-full bg-cyber-500 text-primary-foreground hover:bg-cyber-400"
-                            : "mt-6 w-full border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10"
-                        }
-                      >
-                        <Link href="/auth/register">{plan.cta}</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-6 rounded-lg border border-border/60 bg-night-900/40 p-6 text-center">
-              <p className="font-medium">Offre B2B — écoles & entreprises</p>
-              <p className="mt-1 text-sm text-ink-dim">
-                Licences groupées, tableau de bord formateur, suivi de cohortes
-                et contenus sur-mesure. Facturation annuelle, sur devis.
-              </p>
-              <Button asChild variant="outline" size="sm" className="mt-4 border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10">
-                <Link href="/marketplace">Découvrir l'offre B2B</Link>
-              </Button>
-            </div>
           </div>
         </section>
 

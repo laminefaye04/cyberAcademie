@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,12 +18,34 @@ export default function RegisterPage() {
   const [pseudo, setPseudo] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setError(null);
     setLoading(true);
+
+    if (supabase && isSupabaseConfigured) {
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { username: pseudo } },
+      });
+      setLoading(false);
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
+      // Évaluation initiale au premier passage, puis dashboard
+      router.push("/assessment");
+      router.refresh();
+      return;
+    }
+
+    // Mode démo : aucune configuration Supabase
     setTimeout(() => {
-      router.push("/dashboard");
+      setLoading(false);
+      router.push("/assessment");
     }, 600);
   }
 
@@ -68,6 +91,13 @@ export default function RegisterPage() {
             className="bg-night-800"
           />
         </div>
+
+        {error && (
+          <p className="rounded-md border border-danger/40 bg-danger/10 p-2.5 text-xs text-danger">
+            {error}
+          </p>
+        )}
+
         <Button
           type="submit"
           disabled={loading}
@@ -81,6 +111,13 @@ export default function RegisterPage() {
           Créer mon compte
         </Button>
       </form>
+
+      {!isSupabaseConfigured && (
+        <p className="mt-3 rounded-md border border-warning/30 bg-warning/10 p-2.5 text-center text-xs text-warning">
+          Mode démo actif — aucun projet Supabase configuré. L'inscription est
+          simulée.
+        </p>
+      )}
 
       <div className="my-6 flex items-center gap-3">
         <Separator className="flex-1" />

@@ -7,14 +7,33 @@ import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setError(null);
     setLoading(true);
+
+    if (supabase && isSupabaseConfigured) {
+      const formData = new FormData(event.currentTarget as HTMLFormElement);
+      const email = String(formData.get("email") ?? "");
+      const { error: resetError } =
+        await supabase.auth.resetPasswordForEmail(email);
+      setLoading(false);
+      if (resetError) {
+        setError(resetError.message);
+        return;
+      }
+      setSent(true);
+      return;
+    }
+
+    // Mode démo
     setTimeout(() => {
       setLoading(false);
       setSent(true);
@@ -45,12 +64,20 @@ export default function ForgotPasswordPage() {
             <Label htmlFor="email">Adresse e-mail</Label>
             <Input
               id="email"
+              name="email"
               type="email"
               required
               placeholder="vous@exemple.com"
               className="bg-night-800"
             />
           </div>
+
+          {error && (
+            <p className="rounded-md border border-danger/40 bg-danger/10 p-2.5 text-xs text-danger">
+              {error}
+            </p>
+          )}
+
           <Button
             type="submit"
             disabled={loading}

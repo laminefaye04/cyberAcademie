@@ -5,11 +5,16 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
+  CheckSquare,
   Clock,
-  FlaskConical,
+  FileQuestion,
   FileText,
+  FlaskConical,
+  Globe,
+  Sparkles,
   Star,
   Target,
+  Wrench,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -20,23 +25,39 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ROADMAP_LEVELS } from "@/lib/roadmap";
+import { V1_LEVELS } from "@/lib/roadmap";
 import { getCourse } from "@/lib/courses";
-import { LABS } from "@/lib/labs";
+import {
+  getLearningPath,
+  type LearningPathKind,
+} from "@/lib/learningPath";
+import { cn } from "@/lib/utils";
 
 interface LevelPageProps {
   params: Promise<{ slug: string }>;
 }
 
+const KIND_META: Record<
+  LearningPathKind,
+  { label: string; icon: typeof FlaskConical; badge: string }
+> = {
+  course: { label: "Cours", icon: BookOpen, badge: "border-sky-500/40 bg-sky-500/10 text-sky-400" },
+  exercise: { label: "Exercice", icon: Wrench, badge: "border-purple-500/40 bg-purple-500/10 text-purple-400" },
+  quiz: { label: "Quiz", icon: FileQuestion, badge: "border-success/40 bg-success/10 text-success" },
+  native_lab: { label: "Lab CyberAcademy", icon: FlaskConical, badge: "border-cyber-500/40 bg-cyber-500/10 text-cyber-400" },
+  external_lab: { label: "Mission externe", icon: Globe, badge: "border-amber-500/40 bg-amber-500/10 text-amber-400" },
+  review: { label: "Révision IA", icon: Sparkles, badge: "border-cyber-500/40 bg-cyber-500/10 text-cyber-400" },
+};
+
 export function generateStaticParams() {
-  return ROADMAP_LEVELS.map((level) => ({ slug: level.slug }));
+  return V1_LEVELS.map((level) => ({ slug: level.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: LevelPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const level = ROADMAP_LEVELS.find((l) => l.slug === slug);
+  const level = V1_LEVELS.find((l) => l.slug === slug);
   if (!level) return { title: "Niveau introuvable" };
   return {
     title: `Niveau ${level.id} — ${level.title}`,
@@ -46,12 +67,17 @@ export async function generateMetadata({
 
 export default async function LevelDetailPage({ params }: LevelPageProps) {
   const { slug } = await params;
-  const level = ROADMAP_LEVELS.find((l) => l.slug === slug);
+  const level = V1_LEVELS.find((l) => l.slug === slug);
   if (!level) notFound();
 
   const course = getCourse(level.id);
-  const levelLabs = LABS.filter((lab) => lab.levelId === level.id);
-  const completedLabs = levelLabs.filter((lab) => lab.completed).length;
+  const learningPath = getLearningPath(level.id);
+  const completedLabs = learningPath.filter(
+    (item) => item.kind === "native_lab" && item.lab?.completed
+  ).length;
+  const totalLabs = learningPath.filter(
+    (item) => item.kind === "native_lab"
+  ).length;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
@@ -152,55 +178,101 @@ export default async function LevelDetailPage({ params }: LevelPageProps) {
                   </Button>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  Le contenu de ce niveau est en cours de création par
-                  l'équipe pédagogique.
-                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-warning/15 text-warning">
+                      À venir
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      Ce niveau arrive bientôt sur la plateforme
+                    </span>
+                  </div>
+                  <p className="text-sm text-ink-dim">
+                    Le contenu de ce niveau est en préparation par l'équipe
+                    pédagogique. Pour l'instant, aucune leçon n'est disponible.
+                    Reviens bientôt : il sera débloqué une fois publié.
+                  </p>
+                  <div className="rounded-md border border-border bg-night-800/50 p-4">
+                    <p className="text-sm font-medium">Ce que tu y apprendras</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {level.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="rounded-full border border-border px-2.5 py-0.5 text-xs text-ink-dim"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Labs */}
-          {levelLabs.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <FlaskConical className="h-4 w-4 text-cyber-500" /> Labs du
-                  niveau
-                  <span className="ml-auto text-sm font-medium text-cyber-500">
-                    {completedLabs}/{levelLabs.length}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {levelLabs.map((lab) => (
+          {/* Learning path unifié */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <CheckSquare className="h-4 w-4 text-cyber-500" /> Parcours
+                d'apprentissage
+                <span className="ml-auto text-sm font-medium text-cyber-500">
+                  {completedLabs}/{totalLabs} labs natifs validés
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {learningPath.map((item, index) => {
+                const meta = KIND_META[item.kind];
+                const Icon = meta.icon;
+                const href =
+                  item.kind === "native_lab" && item.lab
+                    ? `/labs/${item.lab.slug}`
+                    : item.kind === "external_lab" && item.externalLab
+                      ? `/labs/${item.externalLab.slug}`
+                      : item.href ?? "#";
+                const done =
+                  item.kind === "native_lab" && item.lab?.completed;
+                return (
                   <Link
-                    key={lab.id}
-                    href={`/labs/${lab.slug}`}
-                    className="flex items-center justify-between gap-3 rounded-md border border-border bg-night-800/50 p-4 transition-colors hover:border-cyber-500/50"
+                    key={index}
+                    href={href}
+                    className="flex items-center gap-3 rounded-md border border-border bg-night-800/50 p-3 transition-colors hover:border-cyber-500/50"
                   >
-                    <div className="flex items-center gap-3">
-                      {lab.completed ? (
-                        <CheckCircle2 className="h-5 w-5 text-cyber-500" />
-                      ) : (
-                        <FlaskConical className="h-5 w-5 text-muted-foreground" />
+                    <div
+                      className={cn(
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border",
+                        meta.badge
                       )}
-                      <div>
-                        <p className="text-sm font-medium">{lab.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {lab.difficulty} · {lab.duration} · {lab.xp} XP
-                        </p>
-                      </div>
+                    >
+                      <Icon className="h-4 w-4" />
                     </div>
-                    <ArrowRight className="h-4 w-4 text-ink-dim" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Badge className={cn("border px-1.5 py-0 text-[10px]", meta.badge)}>
+                          {meta.label}
+                        </Badge>
+                        <p className="truncate text-sm font-medium">
+                          {item.title}
+                        </p>
+                        {done && (
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-cyber-500" />
+                        )}
+                      </div>
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                        {item.duration}
+                        {item.xp > 0 && ` · +${item.xp} XP`}
+                      </p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-ink-dim" />
                   </Link>
-                ))}
-                <Button asChild variant="outline" className="w-full border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10">
-                  <Link href="/labs">Tous les labs</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                );
+              })}
+              <Button asChild variant="outline" className="w-full border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10">
+                <Link href="/labs">Toutes les missions</Link>
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Project */}
           <Card>

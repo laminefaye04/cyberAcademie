@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { KeyRound, Loader2, Lock } from "lucide-react";
 import { GithubIcon, GoogleIcon } from "@/components/social-icons";
 import { AuthShell } from "@/components/auth-shell";
@@ -10,18 +10,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") ?? "/dashboard";
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setError(null);
     setLoading(true);
+
+    if (supabase && isSupabaseConfigured) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      setLoading(false);
+      if (signInError) {
+        setError(
+          signInError.message === "Invalid login credentials"
+            ? "Identifiants incorrects."
+            : signInError.message
+        );
+        return;
+      }
+      router.push(next);
+      router.refresh();
+      return;
+    }
+
+    // Mode démo : aucune configuration Supabase
     setTimeout(() => {
-      router.push("/dashboard");
+      setLoading(false);
+      router.push(next);
     }, 600);
   }
 
@@ -63,6 +90,13 @@ export default function LoginPage() {
             className="bg-night-800"
           />
         </div>
+
+        {error && (
+          <p className="rounded-md border border-danger/40 bg-danger/10 p-2.5 text-xs text-danger">
+            {error}
+          </p>
+        )}
+
         <Button
           type="submit"
           disabled={loading}
@@ -76,6 +110,13 @@ export default function LoginPage() {
           Se connecter
         </Button>
       </form>
+
+      {!isSupabaseConfigured && (
+        <p className="mt-3 rounded-md border border-warning/30 bg-warning/10 p-2.5 text-center text-xs text-warning">
+          Mode démo actif — aucun projet Supabase configuré. La connexion est
+          simulée.
+        </p>
+      )}
 
       <div className="my-6 flex items-center gap-3">
         <Separator className="flex-1" />

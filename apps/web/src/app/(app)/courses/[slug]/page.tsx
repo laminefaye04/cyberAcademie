@@ -10,7 +10,10 @@ import {
   CheckSquare,
   ChevronRight,
   Circle,
+  Flame,
+  Lock,
   PlayCircle,
+  Star,
   TerminalSquare,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -22,10 +25,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { MentorPanel } from "@/components/mentor-panel";
 import { COURSES, type LessonBlock } from "@/lib/courses";
 import { getLevel } from "@/lib/roadmap";
 import { cn } from "@/lib/utils";
-
 interface CoursePageProps {
   params: Promise<{ slug: string }>;
 }
@@ -40,7 +43,6 @@ export default function CoursePage({ params }: CoursePageProps) {
   const [currentLesson, setCurrentLesson] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
-
   if (!course) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-24 text-center">
@@ -58,6 +60,8 @@ export default function CoursePage({ params }: CoursePageProps) {
     modules
       .slice(0, currentModule)
       .reduce((acc, module) => acc + module.lessons.length, 0) + currentLesson;
+  const levelSkills = getLevel(course.levelId).skills;
+  const lessonXp = Math.max(10, Math.round(course.xp / allLessons.length));
   const lesson = modules[currentModule].lessons[currentLesson];
   const isLastLesson = lessonIndex === allLessons.length - 1;
   const isQuiz = lesson.type === "quiz";
@@ -186,10 +190,57 @@ export default function CoursePage({ params }: CoursePageProps) {
         </span>
       </div>
 
+      {/* Gamified progress */}
+      <Card className="mt-4 border-cyber-500/40 bg-cyber-500/[0.04]">
+        <CardContent className="space-y-3 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-cyber-500">{course.title}</span>
+              <span className="ml-2 text-ink-dim">
+                · XP gagné :{" "}
+                <span className="font-semibold text-cyber-400">
+                  {Math.round((lessonIndex / allLessons.length) * course.xp)}{" "}
+                  / {course.xp} XP
+                </span>
+              </span>
+            </p>
+            <Badge className="bg-cyber-500/15 text-cyber-400">
+              {lessonIndex}/{allLessons.length} leçons
+            </Badge>
+          </div>
+          <Progress
+            value={completedPct}
+            className="h-2.5 bg-night-800 [&>div]:bg-cyber-500"
+          />
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-muted-foreground">Compétences acquises :</span>
+            {levelSkills.slice(0, currentModule + 1).map((skill) => (
+              <span
+                key={skill}
+                className="flex items-center gap-1 rounded-full border border-cyber-500/40 bg-cyber-500/10 px-2 py-0.5 text-cyber-400"
+              >
+                <CheckCircle2 className="h-3 w-3" /> {skill}
+              </span>
+            ))}
+            {levelSkills[currentModule + 1] && (
+              <span className="flex items-center gap-1 rounded-full border border-dashed border-border px-2 py-0.5 text-muted-foreground">
+                Prochaine : {levelSkills[currentModule + 1]}
+              </span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-4">
         {/* Module sidebar */}
         <aside className="lg:col-span-1">
           <div className="space-y-4">
+            <MentorPanel
+              compact
+              context={`Tu apprends ${course.title}`}
+              tip={`Concentrez-vous sur la leçon ${lessonIndex + 1} : chaque module valide une nouvelle compétence de la roadmap. Posez une question si un bloc de code reste flou.`}
+              hint={`+${lessonXp} XP pour cette leçon.`}
+            />
             {modules.map((module, moduleIndex) => (
               <div key={module.id}>
                 <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -205,6 +256,8 @@ export default function CoursePage({ params }: CoursePageProps) {
                     const active =
                       moduleIndex === currentModule &&
                       lessonIdx === currentLesson;
+                    const done = idx < lessonIndex;
+                    const locked = idx > lessonIndex;
                     return (
                       <button
                         key={item.id}
@@ -213,11 +266,29 @@ export default function CoursePage({ params }: CoursePageProps) {
                           "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
                           active
                             ? "bg-cyber-500/10 text-cyber-500"
-                            : "text-ink-dim hover:bg-secondary/50 hover:text-ink"
+                            : locked
+                              ? "text-ink-dim/60"
+                              : "text-ink-dim hover:bg-secondary/50 hover:text-ink"
                         )}
                       >
-                        {idx < lessonIndex ? (
+                        <span
+                          className={cn(
+                            "flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-bold",
+                            active
+                              ? "bg-cyber-500 text-primary-foreground"
+                              : done
+                                ? "bg-cyber-500/15 text-cyber-500"
+                                : "bg-night-800 text-muted-foreground"
+                          )}
+                        >
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        {done ? (
                           <CheckCircle2 className="h-4 w-4 shrink-0 text-cyber-500" />
+                        ) : active ? (
+                          <Flame className="h-4 w-4 shrink-0 text-cyber-500" />
+                        ) : locked ? (
+                          <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
                         ) : item.type === "video" ? (
                           <PlayCircle className="h-4 w-4 shrink-0" />
                         ) : item.type === "quiz" ? (
@@ -248,12 +319,17 @@ export default function CoursePage({ params }: CoursePageProps) {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <Badge
-                    variant="outline"
-                    className="border-cyber-500/40 text-cyber-400"
-                  >
-                    {lesson.type}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className="border-cyber-500/40 text-cyber-400"
+                    >
+                      {lesson.type}
+                    </Badge>
+                    <Badge className="bg-cyber-500/15 text-cyber-400">
+                      <Star className="mr-1 h-3 w-3" /> +{lessonXp} XP
+                    </Badge>
+                  </div>
                   <span className="text-xs text-muted-foreground">
                     {lesson.duration}
                   </span>
@@ -269,12 +345,38 @@ export default function CoursePage({ params }: CoursePageProps) {
                   </div>
                 )}
                 {lesson.type === "exercise" && (
-                  <div className="mb-4 rounded-md border border-border bg-night-900 p-4 font-mono text-sm text-cyber-400">
-                    <p className="text-ink-dim">$</p>
-                    <p>port_quiz --level networking</p>
-                    <p className="mt-2 text-ink">
-                      Lancez l'exercice dans le terminal du lab associé.
+                  <div className="mb-4 rounded-md border border-cyber-500/40 bg-cyber-500/[0.06] p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-cyber-500/15 text-cyber-400">
+                          🚩 Mission
+                        </Badge>
+                        <span className="text-xs text-ink-dim">
+                          Difficulté :{" "}
+                          <span className="text-warning">
+                            {"★".repeat(Math.max(1, Math.ceil(currentModule / 2)))}
+                            {"☆".repeat(
+                              Math.max(0, 5 - Math.ceil(currentModule / 2))
+                            )}
+                          </span>
+                        </span>
+                      </div>
+                      <Badge className="bg-cyber-500/15 text-cyber-400">
+                        <Star className="mr-1 h-3 w-3" /> {lessonXp * 2} XP
+                      </Badge>
+                    </div>
+                    <p className="mt-2 text-sm text-ink">
+                      Objectif : mettre en pratique cette leçon dans le
+                      terminal du lab associé. Suivez les consignes et
+                      soumettez le flag pour valider.
                     </p>
+                    <Button
+                      asChild
+                      size="sm"
+                      className="mt-3 bg-cta-700 text-white hover:bg-cta-600"
+                    >
+                      <Link href="/labs">Débuter le challenge</Link>
+                    </Button>
                   </div>
                 )}
                 <div className="space-y-4">

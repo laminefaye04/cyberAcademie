@@ -21,6 +21,14 @@ import { BADGES } from "@/lib/badges";
 import { DEMO_USER } from "@/lib/mock";
 import { ROADMAP_LEVELS } from "@/lib/roadmap";
 import { Button } from "@/components/ui/button";
+import {
+  CAREER_GOAL,
+  getCompletedLevelsCount,
+  getGlobalProgressPct,
+  getMasteredSkills,
+  getRankTitle,
+  getTotalLevels,
+} from "@/lib/progress";
 
 interface PortfolioPageProps {
   params: Promise<{ pseudo: string }>;
@@ -39,10 +47,12 @@ export async function generateMetadata({
 export default async function PortfolioPage({ params }: PortfolioPageProps) {
   const { pseudo } = await params;
 
-  const skills = DEMO_USER.completedLevels.flatMap(
-    (id) => ROADMAP_LEVELS[id].skills
-  );
+  const skills = getMasteredSkills();
   const earnedBadges = BADGES.filter((badge) => badge.earned);
+  const completedCount = getCompletedLevelsCount();
+  const totalLevels = getTotalLevels();
+  const globalPct = getGlobalProgressPct();
+  const rankTitle = getRankTitle(DEMO_USER.level);
 
   return (
     <div className="min-h-screen bg-night-950 text-ink">
@@ -74,7 +84,7 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl font-bold tracking-tight">{pseudo}</h1>
                 <Badge className="bg-cyber-500/15 text-cyber-400">
-                  {DEMO_USER.level} / 12 niveaux
+                  {rankTitle} · {globalPct}%
                 </Badge>
               </div>
               <p className="mt-2 text-sm text-ink-dim">{DEMO_USER.bio}</p>
@@ -85,7 +95,7 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <GitBranch className="h-4 w-4 text-cyber-500" />
-                  {skills.length} compétences validées
+                  {completedCount}/{totalLevels} niveaux
                 </span>
                 <a
                   href="https://github.com/cypher_rookie"
@@ -94,25 +104,57 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
                   <Link2 className="h-4 w-4 text-cyber-500" /> github.com/cypher_rookie
                 </a>
               </div>
+              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  { label: "Labs validés", value: String(DEMO_USER.labsCompleted) },
+                  { label: "Challenges", value: String(DEMO_USER.challengesSolved) },
+                  { label: "CTFs", value: "0" },
+                  { label: "Moyenne quiz", value: `${DEMO_USER.quizAverage}%` },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-md border border-border bg-night-800/50 p-3 text-center"
+                  >
+                    <p className="text-lg font-bold text-cyber-400">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Compétences maîtrisées</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              <span>Compétences maîtrisées</span>
+              <span className="text-sm font-medium text-cyber-500">
+                {skills.length} compétences
+              </span>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {skills.map((skill) => (
-              <Badge
-                key={skill}
-                variant="outline"
-                className="border-cyber-500/40 bg-cyber-500/5 text-cyber-400"
-              >
-                <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
-                {skill}
-              </Badge>
-            ))}
+          <CardContent>
+            <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-night-800">
+              <div
+                className="h-full rounded-full bg-cyber-500"
+                style={{ width: `${globalPct}%` }}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill) => (
+                <Badge
+                  key={skill}
+                  variant="outline"
+                  className="border-cyber-500/40 bg-cyber-500/5 text-cyber-400"
+                >
+                  <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Objectif de carrière : {CAREER_GOAL}
+            </p>
           </CardContent>
         </Card>
 
@@ -124,7 +166,7 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
             {earnedBadges.map((badge) => (
               <div
                 key={badge.id}
-                className="flex items-center gap-2 rounded-md border border-border bg-night-800/60 px-3 py-2"
+                className="flex items-center gap-2 rounded-md border border-cyber-500/40 bg-night-800/60 px-3 py-2"
               >
                 <span className="text-xl">{badge.icon}</span>
                 <span className="text-sm">{badge.name}</span>

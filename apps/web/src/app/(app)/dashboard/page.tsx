@@ -4,22 +4,44 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  BookOpen,
   CalendarDays,
-  FlaskConical,
+  FileQuestion,
   Flame,
+  FlaskConical,
   GitBranch,
+  Globe,
   Lightbulb,
   Sparkles,
   Trophy,
+  Wrench,
   Zap,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { DEMO_USER, AI_RECOMMENDATIONS, XP_HISTORY } from "@/lib/mock";
+import { DEMO_USER, AI_RECOMMENDATIONS, XP_HISTORY, WEEKLY_STATS } from "@/lib/mock";
 import { BADGES } from "@/lib/badges";
-import { ROADMAP_LEVELS } from "@/lib/roadmap";
+import { V1_LEVELS } from "@/lib/roadmap";
+import { MentorPanel } from "@/components/mentor-panel";
+import { LABS } from "@/lib/labs";
+import {
+  getNextRecommendedActivity,
+  type LearningPathItem,
+} from "@/lib/learningPath";
+import {
+  getCompletedLabIds,
+  getCompletedExternalLabIds,
+} from "@/lib/labProgress";
+import {
+  getCompletedLevelsCount,
+  getCurrentLevel,
+  getGlobalProgressPct,
+  getMasteredSkills,
+  getRankTitle,
+  getTotalLevels,
+} from "@/lib/progress";
 
 const RECO_ICONS = {
   lesson: GitBranch,
@@ -28,14 +50,36 @@ const RECO_ICONS = {
   ctf: Trophy,
 } as const;
 
+const NEXT_ACTIVITY_META: Record<
+  LearningPathItem["kind"],
+  { label: string; icon: typeof FlaskConical; className: string }
+> = {
+  course: { label: "Cours", icon: BookOpen, className: "border-sky-500/40 bg-sky-500/10" },
+  exercise: { label: "Exercice", icon: Wrench, className: "border-purple-500/40 bg-purple-500/10" },
+  quiz: { label: "Quiz", icon: FileQuestion, className: "border-success/40 bg-success/10" },
+  native_lab: { label: "Lab natif", icon: FlaskConical, className: "border-cyber-500/40 bg-cyber-500/10" },
+  external_lab: { label: "Mission externe", icon: Globe, className: "border-amber-500/40 bg-amber-500/10" },
+  review: { label: "Révision IA", icon: Sparkles, className: "border-cyber-500/40 bg-cyber-500/10" },
+};
+
+const WEEK_MAX = Math.max(...WEEKLY_STATS.days.map((day) => day.value));
+
 export default function DashboardPage() {
-  const progressPct = Math.round(
-    (DEMO_USER.xp / DEMO_USER.xpToNextLevel) * 100
+  const globalPct = getGlobalProgressPct();
+  const skillsMastered = getMasteredSkills();
+  const nextLevel = getCurrentLevel();
+  const rankTitle = getRankTitle(DEMO_USER.level);
+  const completedCount = getCompletedLevelsCount();
+  const totalLevels = getTotalLevels();
+  const earnedBadges = BADGES.filter((b) => b.earned).length;
+
+  const nextActivity = getNextRecommendedActivity(
+    [
+      ...LABS.filter((l) => l.completed).map((l) => l.id),
+      ...getCompletedLabIds(),
+    ],
+    getCompletedExternalLabIds()
   );
-  const skillsMastered = DEMO_USER.completedLevels.flatMap(
-    (id) => ROADMAP_LEVELS[id].skills
-  );
-  const nextLevel = ROADMAP_LEVELS[DEMO_USER.level];
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
@@ -66,7 +110,7 @@ export default function DashboardPage() {
             </div>
             <p className="mt-2 text-2xl font-bold">{DEMO_USER.level}</p>
             <p className="text-xs text-muted-foreground">
-              {nextLevel.subtitle}
+              {rankTitle}
             </p>
           </CardContent>
         </Card>
@@ -78,8 +122,9 @@ export default function DashboardPage() {
             </div>
             <p className="mt-2 text-2xl font-bold">{DEMO_USER.xp.toLocaleString("fr-FR")}</p>
             <p className="text-xs text-muted-foreground">
-              {DEMO_USER.xpToNextLevel.toLocaleString("fr-FR")} XP pour le niveau{" "}
-              {DEMO_USER.level + 1}
+              {DEMO_USER.level >= V1_LEVELS.length - 1
+                ? `Cursus complété · ${globalPct}%`
+                : `${DEMO_USER.xpToNextLevel.toLocaleString("fr-FR")} XP pour le niveau ${DEMO_USER.level + 1}`}
             </p>
           </CardContent>
         </Card>
@@ -90,12 +135,12 @@ export default function DashboardPage() {
               <Trophy className="h-4 w-4 text-cyber-500" />
             </div>
             <p className="mt-2 text-2xl font-bold">
-              {BADGES.filter((b) => b.earned).length}
+              {earnedBadges}
               <span className="text-lg text-muted-foreground">
                 /{BADGES.length}
               </span>
             </p>
-            <p className="text-xs text-muted-foreground">sur 12 niveaux</p>
+            <p className="text-xs text-muted-foreground">sur 12 badges d'actions</p>
           </CardContent>
         </Card>
         <Card>
@@ -115,20 +160,148 @@ export default function DashboardPage() {
         </Card>
       </div>
 
+      {/* Continue ton parcours — prochaine activité recommandée */}
+      {nextActivity ? (
+        <Card className="border-cyber-500/40 bg-gradient-to-r from-cyber-500/[0.08] to-transparent">
+          <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              {(() => {
+                const meta = NEXT_ACTIVITY_META[nextActivity.item.kind];
+                const Icon = meta.icon;
+                return (
+                  <div
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-md border ${meta.className}`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                );
+              })()}
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-cyber-400">
+                    Continue ton parcours
+                  </p>
+                  <Badge className="bg-cyber-500/15 text-cyber-400">
+                    Niveau {nextActivity.level.id} — {nextActivity.level.title}
+                  </Badge>
+                </div>
+                <p className="mt-1 font-semibold">
+                  {nextActivity.item.title}
+                </p>
+                <p className="mt-1 text-sm text-ink-dim">
+                  {NEXT_ACTIVITY_META[nextActivity.item.kind].label} ·{" "}
+                  {nextActivity.item.duration}
+                  {nextActivity.item.xp > 0 && ` · +${nextActivity.item.xp} XP`}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-4 sm:flex-col sm:items-end">
+              {nextActivity.item.xp > 0 && (
+                <span className="flex items-center gap-1.5 text-sm font-medium text-cyber-400">
+                  <Zap className="h-4 w-4" />
+                  +{nextActivity.item.xp} XP
+                </span>
+              )}
+              <Button
+                asChild
+                size="sm"
+                className="bg-cta-700 text-white hover:bg-cta-600"
+              >
+                <Link href={nextActivity.item.href ?? "/roadmap"}>
+                  Commencer <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-success/40 bg-gradient-to-r from-success/[0.08] to-transparent">
+          <CardContent className="p-5 text-sm text-ink-dim">
+            🎉 Toutes les activités V1 sont validées. Prends une révision guidée
+            avec le Cyber Mentor pour consolider tes acquis.
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ⭐ Stats hebdomadaires */}
+      <Card className="border-cyber-500/40">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CalendarDays className="h-4 w-4 text-cyber-500" />
+            Cette semaine
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-md border border-cyber-500/30 bg-cyber-500/[0.06] p-3">
+              <p className="text-lg font-bold text-cyber-400">
+                +{WEEKLY_STATS.xp.toLocaleString("fr-FR")} XP
+              </p>
+              <p className="text-xs text-muted-foreground">XP gagnés</p>
+            </div>
+            <div className="rounded-md border border-border bg-night-800/50 p-3">
+              <p className="text-lg font-bold text-ink">{WEEKLY_STATS.labs} labs</p>
+              <p className="text-xs text-muted-foreground">terminés</p>
+            </div>
+            <div className="rounded-md border border-border bg-night-800/50 p-3">
+              <p className="text-lg font-bold text-ink">
+                {WEEKLY_STATS.challenges} challenges
+              </p>
+              <p className="text-xs text-muted-foreground">réussis</p>
+            </div>
+            <div className="rounded-md border border-border bg-night-800/50 p-3">
+              <p className="text-lg font-bold text-ink">
+                {WEEKLY_STATS.quizAverage}%
+              </p>
+              <p className="text-xs text-muted-foreground">moyenne quiz</p>
+            </div>
+          </div>
+
+          {/* Graphique temps d'apprentissage */}
+          <div>
+            <p className="mb-2 text-xs text-muted-foreground">
+              Temps d'apprentissage (heures)
+            </p>
+            <div className="flex items-end justify-between gap-2">
+              {WEEKLY_STATS.days.map((day) => (
+                <div key={day.label} className="flex flex-1 flex-col items-center gap-1">
+                  <span className="text-[10px] font-mono text-cyber-400">
+                    {day.value}h
+                  </span>
+                  <div className="flex h-20 w-full items-end rounded-md bg-night-800">
+                    <div
+                      className="w-full rounded-md bg-gradient-to-t from-cyber-500/60 to-cyber-500 transition-all"
+                      style={{ height: `${(day.value / WEEK_MAX) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">
+                    {day.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Progress card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Progression vers le niveau {DEMO_USER.level + 1}</span>
+            <span>
+              {DEMO_USER.level >= V1_LEVELS.length - 1
+                ? "Cursus complété"
+                : `Progression vers le niveau ${DEMO_USER.level + 1}`}
+            </span>
             <span className="text-sm font-medium text-cyber-500">
-              {progressPct}%
+              {globalPct}%
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Progress value={progressPct} className="h-2.5 bg-night-800" />
+          <Progress value={globalPct} className="h-2.5 bg-night-800" />
           <div className="flex flex-wrap items-center gap-2">
-            {ROADMAP_LEVELS.map((level) => {
+            {V1_LEVELS.map((level) => {
               const status = DEMO_USER.completedLevels.includes(level.id)
                 ? "completed"
                 : level.id === DEMO_USER.level
@@ -157,6 +330,10 @@ export default function DashboardPage() {
               );
             })}
           </div>
+          <p className="text-xs text-muted-foreground">
+            {completedCount}/{totalLevels} niveaux validés · {skillsMastered.length}{" "}
+            compétences maîtrisées
+          </p>
         </CardContent>
       </Card>
 
@@ -222,7 +399,8 @@ export default function DashboardPage() {
                   </Badge>
                 ))}
                 <span className="text-sm text-muted-foreground">
-                  +{nextLevel.skills.length} compétences en cours ({nextLevel.title})
+                  +{nextLevel?.skills.length ?? 0} compétences en cours (
+                  {nextLevel?.title ?? "niveau suivant"})
                 </span>
               </CardContent>
             </Card>
@@ -231,6 +409,12 @@ export default function DashboardPage() {
 
         {/* Right column: XP history + badges */}
         <div className="space-y-6">
+          <MentorPanel
+            context={`Contexte : niveau ${DEMO_USER.level} (${rankTitle}) · ${completedCount}/${totalLevels} niveaux`}
+            tip={`Tu as terminé Networking mais tu as obtenu ${DEMO_USER.quizAverage}% de moyenne aux quiz. Points faibles détectés : ${DEMO_USER.weakSkills.join(", ")}. Je te recommande de revoir le triple handshake TCP avant le lab « Capture TCP ».`}
+            hint={`💡 Le lab « Capture TCP » te rapportera 300 XP et validera le niveau ${DEMO_USER.level + 1}.`}
+            badge="2 points faibles"
+          />
           <div>
             <div className="mb-3 flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-cyber-500" />

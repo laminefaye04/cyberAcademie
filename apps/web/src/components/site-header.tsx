@@ -6,7 +6,6 @@ const NAV_LINKS = [
   { href: "#roadmap", label: "Roadmap" },
   { href: "#labs", label: "Labs" },
   { href: "#ia", label: "Mentor IA" },
-  { href: "#pricing", label: "Tarifs" },
 ];
 
 export function SiteHeader() {

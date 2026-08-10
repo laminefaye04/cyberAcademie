@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   Award,
   Globe,
   KeyRound,
-  Link2,
   Loader2,
-  Lock,
   ShieldCheck,
   Star,
+  Target,
   Trophy,
   UserRound,
 } from "lucide-react";
@@ -24,7 +22,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BADGES } from "@/lib/badges";
 import { DEMO_USER } from "@/lib/mock";
-import { ROADMAP_LEVELS } from "@/lib/roadmap";
+import { V1_LEVELS } from "@/lib/roadmap";
+import {
+  CAREER_GOAL,
+  getCareerProgressPct,
+  getCompletedLevelsCount,
+  getGlobalProgressPct,
+  getMasteredSkills,
+  getRankTitle,
+  getTotalLevels,
+} from "@/lib/progress";
+
+const SKILL_DOMAINS = [
+  { name: "Linux", levels: 2, max: 2 },
+  { name: "Network", levels: 2, max: 2 },
+  { name: "Web", levels: 3, max: 3 },
+  { name: "Offensif", levels: 4, max: 5 },
+];
 
 export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
@@ -40,7 +54,13 @@ export default function ProfilePage() {
     }, 600);
   }
 
-  const portfolioUrl = `/portfolio/${DEMO_USER.pseudo}`;
+  const rankTitle = getRankTitle(DEMO_USER.level);
+  const xpPct = Math.min(100, Math.round((DEMO_USER.xp / DEMO_USER.xpToNextLevel) * 100));
+  const completedCount = getCompletedLevelsCount();
+  const totalLevels = getTotalLevels();
+  const globalPct = getGlobalProgressPct();
+  const careerPct = getCareerProgressPct();
+  const masteredSkills = getMasteredSkills();
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6">
@@ -60,6 +80,9 @@ export default function ProfilePage() {
               <Badge className="bg-cyber-500/15 text-cyber-400">
                 Niveau {DEMO_USER.level}
               </Badge>
+              <Badge variant="outline" className="border-cyber-500/40 text-cyber-400">
+                {rankTitle}
+              </Badge>
               <Badge variant="outline" className="border-border text-ink-dim">
                 Apprenant
               </Badge>
@@ -72,20 +95,35 @@ export default function ProfilePage() {
               </span>
               <span className="flex items-center gap-1.5">
                 <Trophy className="h-4 w-4 text-cyber-500" />
-                {DEMO_USER.completedLevels.length}/12 niveaux
+                {completedCount}/{totalLevels} niveaux
               </span>
               <span className="flex items-center gap-1.5">
                 <Globe className="h-4 w-4 text-cyber-500" />
                 Cameroun
               </span>
             </div>
+            {/* XP bar + career goal */}
+            <div className="mt-4 max-w-md space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">
+                  {globalPct >= 100 ? "Cursus complété" : `${xpPct}% du niveau ${DEMO_USER.level}`}
+                </span>
+                <span className="text-cyber-400">
+                  {DEMO_USER.xp.toLocaleString("fr-FR")} /{" "}
+                  {DEMO_USER.xpToNextLevel.toLocaleString("fr-FR")} XP
+                </span>
+              </div>
+              <Progress value={xpPct} className="h-2 bg-night-800" />
+              <div className="flex items-center justify-between rounded-md border border-cyber-500/30 bg-cyber-500/[0.06] px-3 py-2 text-xs">
+                <span className="flex items-center gap-1.5 text-cyber-400">
+                  <Target className="h-3.5 w-3.5" /> Objectif : {CAREER_GOAL}
+                </span>
+                <span className="text-ink-dim">
+                  {completedCount}/{totalLevels} niveaux · {careerPct}%
+                </span>
+              </div>
+            </div>
           </div>
-          <Button asChild variant="outline" className="border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10">
-            <Link href={portfolioUrl}>
-              <Link2 className="mr-2 h-4 w-4" />
-              Voir mon portfolio
-            </Link>
-          </Button>
         </CardContent>
       </Card>
 
@@ -106,10 +144,41 @@ export default function ProfilePage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Target className="h-4 w-4 text-cyber-500" />
+                  Compétences par domaine
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {SKILL_DOMAINS.map((domain) => {
+                  const pct = Math.round((domain.levels / domain.max) * 100);
+                  return (
+                    <div key={domain.name}>
+                      <div className="mb-1.5 flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-2">
+                          <ShieldCheck className="h-4 w-4 text-cyber-500" />
+                          {domain.name}
+                        </span>
+                        <span className="font-mono text-xs text-cyber-400">
+                          {domain.levels}/{domain.max} niveaux
+                        </span>
+                      </div>
+                      <Progress
+                        value={pct}
+                        className="h-1.5 bg-night-800 [&>div]:bg-cyber-500"
+                      />
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle className="text-base">Progression par niveau</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {ROADMAP_LEVELS.slice(0, 6).map((level) => {
+                {V1_LEVELS.map((level) => {
                   const isDone = DEMO_USER.completedLevels.includes(level.id);
                   const isCurrent = level.id === DEMO_USER.level;
                   return (
@@ -117,7 +186,7 @@ export default function ProfilePage() {
                       <div className="mb-1.5 flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2">
                           <level.icon className="h-4 w-4 text-cyber-500" />
-                          {level.title}
+                          <span className="truncate">{level.title}</span>
                         </span>
                         <span
                           className={
@@ -133,9 +202,7 @@ export default function ProfilePage() {
                       </div>
                       <Progress
                         value={isDone ? 100 : isCurrent ? 45 : 0}
-                        className={
-                          isCurrent ? "h-1.5 bg-night-800" : "h-1.5 bg-night-800"
-                        }
+                        className="h-1.5 bg-night-800"
                       />
                     </div>
                   );
@@ -167,29 +234,6 @@ export default function ProfilePage() {
                   </p>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Lock className="h-4 w-4 text-cyber-500" />
-                    Abonnement
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Freemium</p>
-                      <p className="text-xs text-muted-foreground">
-                        Niveaux 0-1 · Cyber Mentor limité
-                      </p>
-                    </div>
-                    <Badge className="bg-night-800 text-ink-dim">Gratuit</Badge>
-                  </div>
-                  <Button asChild className="w-full bg-cta-700 text-white hover:bg-cta-600">
-                    <Link href="/marketplace">Passer au Premium</Link>
-                  </Button>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </TabsContent>
@@ -199,7 +243,7 @@ export default function ProfilePage() {
             {BADGES.map((badge) => (
               <Card
                 key={badge.id}
-                className={badge.earned ? "border-cyber-500/50" : "opacity-60"}
+                className={badge.earned ? "border-cyber-500/50" : "opacity-80"}
               >
                 <CardContent className="flex items-start gap-4 p-5">
                   <span
@@ -209,7 +253,7 @@ export default function ProfilePage() {
                   >
                     {badge.icon}
                   </span>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium">{badge.name}</p>
                     <p className="mt-1 text-sm text-ink-dim">
                       {badge.description}
@@ -217,15 +261,24 @@ export default function ProfilePage() {
                     <p className="mt-2 text-xs text-muted-foreground">
                       {badge.criteria}
                     </p>
-                    {badge.earned ? (
-                      <Badge className="mt-2 bg-cyber-500 text-primary-foreground">
-                        Débloqué
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="mt-2 border-border text-muted-foreground">
-                        À débloquer
-                      </Badge>
-                    )}
+                    <div className="mt-2">
+                      <div className="mb-1 flex justify-between text-[10px] text-muted-foreground">
+                        <span>
+                          {Math.min(badge.progress, badge.target)}/
+                          {badge.target}
+                        </span>
+                        {badge.earned && (
+                          <span className="text-cyber-500">Terminé</span>
+                        )}
+                      </div>
+                      <Progress
+                        value={Math.min(
+                          100,
+                          Math.round((badge.progress / badge.target) * 100)
+                        )}
+                        className="h-1 bg-night-800"
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
