@@ -42,7 +42,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --font-sans: var(--font-inter);
-  --font-mono: var(--font-mono);
 }
 
 @theme {
@@ -61,9 +60,28 @@
   --color-cta-500: #1260cf;
   --color-ink: #e6edf7;
   --color-ink-dim: #a9b6c9;
+
+  /* Signaux (fond sombre — contrastes WCAG AA) */
   --color-success: #34d399;
+  --color-success-foreground: #04302a;
   --color-warning: #fbbf24;
+  --color-warning-foreground: #3a2502;
   --color-danger: #f87171;
+  --color-danger-foreground: #4a0e0e;
+  --color-info: #60a5fa;
+  --color-info-foreground: #0a2147;
+
+  /* Récompenses / XP / badges — or CyberAcademy */
+  --color-gold-300: #fde68a;
+  --color-gold-400: #fcd34d;
+  --color-gold-500: #f4b732;
+  --color-gold-600: #d69e2e;
+  --color-gold-foreground: #3c2a02;
+  --color-gold-hover: #f8c94c;
+
+  /* Verrouillé (dérivé gris) */
+  --color-night-950: #0b1220; /* doublon gardé pour stabilité */
+  --color-success-warning-fallback: #34d399;
 }
 
 @layer base {

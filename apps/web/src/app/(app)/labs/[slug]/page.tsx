@@ -465,7 +465,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
 
         <Card className="mt-5 border-cyber-500/40 bg-gradient-to-r from-cyber-500/[0.08] to-transparent">
           <CardContent className="p-5">
-            <p className="text-sm font-medium text-ink-dim">🎯 Scénario</p>
+            <p className="text-sm font-medium text-ink-dim"> Scénario</p>
             <p className="mt-2 text-base leading-relaxed text-ink">
               {lab.scenario}
             </p>
@@ -551,7 +551,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
               <p className="mt-0.5 text-xs text-muted-foreground">base</p>
             </div>
             <div className="rounded-md border border-cyber-500/30 bg-cyber-500/[0.06] p-3 text-center">
-              <p className="font-medium">🏅 {lab.badge}</p>
+              <p className="font-medium"> {lab.badge}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">badge obtenu</p>
             </div>
             <div className="rounded-md border border-cyber-500/30 bg-cyber-500/[0.06] p-3 text-center">
@@ -684,7 +684,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
           </Card>
           <Card>
             <CardContent className="p-5 text-center">
-              <p className="text-2xl font-bold">🏅 {lab.badge}</p>
+              <p className="text-2xl font-bold"> {lab.badge}</p>
               <p className="mt-1 text-xs text-muted-foreground">badge débloqué</p>
             </CardContent>
           </Card>
@@ -714,7 +714,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
                   variant="outline"
                   className="border-success/40 bg-success/10 text-success"
                 >
-                  ✓ {skill}
+                   {skill}
                 </Badge>
               ))}
             </div>
@@ -963,7 +963,7 @@ function NativeLabView({ lab }: { lab: Lab }) {
                   className="flex-1 border-cyber-500/40 bg-transparent text-cyber-400 hover:bg-cyber-500/10"
                 >
                   <Copy className="mr-1.5 h-3.5 w-3.5" />
-                  {copied ? "Copié ✓" : "Copier IP"}
+                  {copied ? "Copié " : "Copier IP"}
                 </Button>
                 <Button
                   onClick={resetLab}
@@ -1236,7 +1236,7 @@ function ExternalLabView({ lab }: { lab: ExternalLab }) {
                   variant="outline"
                   className="border-success/40 bg-success/10 text-success"
                 >
-                  ✓ {skill}
+                   {skill}
                 </Badge>
               ))}
             </div>
@@ -1407,7 +1407,7 @@ function ExternalLabView({ lab }: { lab: ExternalLab }) {
 
       <Card className="mt-5 border-cyber-500/40 bg-gradient-to-r from-cyber-500/[0.08] to-transparent">
         <CardContent className="p-5">
-          <p className="text-sm font-medium text-ink-dim">🎯 Mission</p>
+          <p className="text-sm font-medium text-ink-dim"> Mission</p>
           <p className="mt-2 text-base leading-relaxed text-ink">
             {lab.description}
           </p>

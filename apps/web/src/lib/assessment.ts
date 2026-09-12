@@ -11,10 +11,10 @@ export const ASSESSMENT_DOMAINS: {
   label: string;
   icon: string;
 }[] = [
-  { id: "fundamentals", label: "Fondamentaux informatiques", icon: "🖥️" },
-  { id: "linux", label: "Linux", icon: "🐧" },
-  { id: "networking", label: "Réseau", icon: "🌐" },
-  { id: "web", label: "Web", icon: "🕸️" },
+  { id: "fundamentals", label: "Fondamentaux informatiques", icon: "" },
+  { id: "linux", label: "Linux", icon: "" },
+  { id: "networking", label: "Réseau", icon: "" },
+  { id: "web", label: "Web", icon: "" },
 ];
 
 export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [

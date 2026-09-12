@@ -219,7 +219,7 @@ export default function DashboardPage() {
       ) : (
         <Card className="border-success/40 bg-gradient-to-r from-success/[0.08] to-transparent">
           <CardContent className="p-5 text-sm text-ink-dim">
-            🎉 Toutes les activités V1 sont validées. Prends une révision guidée
+             Toutes les activités V1 sont validées. Prends une révision guidée
             avec le Cyber Mentor pour consolider tes acquis.
           </CardContent>
         </Card>
@@ -461,7 +461,7 @@ export default function DashboardPage() {
           <MentorPanel
             context={`Contexte : niveau ${DEMO_USER.level} (${rankTitle}) · ${completedCount}/${totalLevels} niveaux`}
             tip={`Tu as terminé Networking mais tu as obtenu ${DEMO_USER.quizAverage}% de moyenne aux quiz. Points faibles détectés : ${DEMO_USER.weakSkills.join(", ")}. Je te recommande de revoir le triple handshake TCP avant le lab « Capture TCP ».`}
-            hint={`💡 Le lab « Capture TCP » te rapportera 300 XP et validera le niveau ${DEMO_USER.level + 1}.`}
+            hint={` Le lab « Capture TCP » te rapportera 300 XP et validera le niveau ${DEMO_USER.level + 1}.`}
             badge="2 points faibles"
           />
           <div>

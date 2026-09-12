@@ -117,7 +117,7 @@ export const HANDSHAKE_REPLY: HandshakeReply = {
     "  |                            |",
     "  |        ACK ------------->  |",
     "  |                            |",
-    "  |     Connexion établie ✓    |",
+    "  |     Connexion établie     |",
   ],
   conclusion:
     "Ce mécanisme permet de s'assurer que les deux côtés sont prêts à communiquer avant d'échanger des données.",
@@ -130,7 +130,7 @@ export const HANDSHAKE_REPLY: HandshakeReply = {
   },
 };
 
-const WEAKNESS_REPLY = `Analyse de tes dernières performances, ${DEMO_USER.pseudo} 👇
+const WEAKNESS_REPLY = `Analyse de tes dernières performances, ${DEMO_USER.pseudo} 
 
 • TCP/IP — triple handshake : 42% au quiz. C'est ta plus grande lacune en ce moment.
 • SSRF : 35% — la notion de requête côté serveur n'est pas encore ancrée.

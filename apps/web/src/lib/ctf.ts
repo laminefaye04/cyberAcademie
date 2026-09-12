@@ -32,7 +32,7 @@ export const CTFS: Ctf[] = [
   {
     id: "ctf-01",
     name: "Rookie Hunt",
-    emoji: "🔥",
+    emoji: "",
     tagline: "12 challenges d'échauffement pour valider les fondamentaux.",
     participants: 248,
     duration: "48 h",

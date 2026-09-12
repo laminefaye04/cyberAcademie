@@ -696,7 +696,7 @@ export const MODES: {
   {
     value: "discovery",
     label: "Découverte",
-    emoji: "🟢",
+    emoji: "",
     description: "L'IA explique beaucoup, les indices sont généreux. Idéal pour débuter.",
     hints: 5,
     xpBonus: 0,
@@ -704,7 +704,7 @@ export const MODES: {
   {
     value: "standard",
     label: "Standard",
-    emoji: "🟡",
+    emoji: "",
     description: "Quelques indices, un rythme normal. L'expérience recommandée.",
     hints: 3,
     xpBonus: 10,
@@ -712,7 +712,7 @@ export const MODES: {
   {
     value: "expert",
     label: "Expert",
-    emoji: "🔴",
+    emoji: "",
     description: "Aucun indice, chronomètre. Pour prouver ta maîtrise.",
     hints: 0,
     xpBonus: 25,

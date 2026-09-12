@@ -94,7 +94,7 @@ export const AI_RECOMMENDATIONS: AiRecommendation[] = [
 ];
 
 export const AI_RECOMMENDATIONS_CONTEXT = {
-  intro: `Bonjour ${DEMO_USER.pseudo} 👋 Je suis ton Cyber Mentor.
+  intro: `Bonjour ${DEMO_USER.pseudo}  Je suis ton Cyber Mentor.
 
 Je connais ta progression : tu viens de terminer le niveau ${DEMO_USER.level} (${DEMO_USER.levelTitle}). Deux points faibles détectés sur tes derniers quiz :
 • TCP/IP (42% au triple handshake)

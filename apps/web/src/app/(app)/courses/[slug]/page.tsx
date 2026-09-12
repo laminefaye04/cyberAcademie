@@ -350,13 +350,13 @@ export default function CoursePage({ params }: CoursePageProps) {
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
                         <Badge className="bg-cyber-500/15 text-cyber-400">
-                          🚩 Mission
+                           Mission
                         </Badge>
                         <span className="text-xs text-ink-dim">
                           Difficulté :{" "}
                           <span className="text-warning">
-                            {"★".repeat(Math.max(1, Math.ceil(currentModule / 2)))}
-                            {"☆".repeat(
+                            {"".repeat(Math.max(1, Math.ceil(currentModule / 2)))}
+                            {"".repeat(
                               Math.max(0, 5 - Math.ceil(currentModule / 2))
                             )}
                           </span>

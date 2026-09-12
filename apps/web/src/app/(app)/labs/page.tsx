@@ -17,6 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LABS, LAB_TYPE_LABELS, type LabType } from "@/lib/labs";
@@ -143,7 +144,7 @@ const STATUS_META: Record<ActivityStatus, { label: string; className: string }> 
   },
   available: {
     label: "Disponible",
-    className: "bg-night-800 text-ink-dim",
+    className: "border-success/30 bg-success/10 text-success",
   },
   locked: {
     label: "Verrouillé",
@@ -202,19 +203,7 @@ function ActivityCard({ activity, status }: { activity: ActivityCardData; status
                 <span>·</span>
                 <span>Niveau {activity.levelId}</span>
                 <span>·</span>
-                <span className="flex items-center gap-0.5">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star
-                      key={index}
-                      className={cn(
-                        "h-3 w-3",
-                        index < stars
-                          ? "fill-warning text-warning"
-                          : "text-muted-foreground/30"
-                      )}
-                    />
-                  ))}
-                </span>
+<DifficultyBadge stars={stars} />
               </p>
             </div>
           </div>

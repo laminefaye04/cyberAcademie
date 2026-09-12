@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -43,18 +44,18 @@ const CAREER_GOALS = [
 ];
 
 const LEVEL_BADGES: Record<number, string> = {
-  0: "🧭",
-  1: "🐚",
-  2: "📡",
-  3: "⚙️",
-  4: "⚡",
-  5: "🛡️",
-  6: "🎯",
-  7: "🏆",
-  8: "🐛",
-  9: "👑",
-  10: "🔥",
-  11: "☁️",
+  0: "",
+  1: "",
+  2: "",
+  3: "",
+  4: "",
+  5: "",
+  6: "",
+  7: "",
+  8: "",
+  9: "",
+  10: "",
+  11: "",
 };
 
 const IA_EXPLANATIONS: Record<number, string> = {
@@ -328,11 +329,7 @@ export default function RoadmapPage() {
                                     À venir
                                   </Badge>
                                 )}
-                                <Badge className="bg-night-800 text-ink-dim">
-                                  <Star className="mr-1 h-3 w-3 text-warning" />
-                                  {"★".repeat(stars)}
-                                  {"☆".repeat(5 - stars)}
-                                </Badge>
+                                <DifficultyBadge stars={stars} />
                               </div>
                               <h2 className="mt-2 flex items-center gap-2 text-base font-semibold sm:text-lg">
                                 <level.icon className="h-4 w-4 text-cyber-500" />
@@ -364,7 +361,7 @@ export default function RoadmapPage() {
                           {/* ⭐⭐ 2. Objectif */}
                           <div className="mt-3">
                             <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-cyber-500">
-                              🎯 À la fin de ce niveau, tu seras capable de :
+                               À la fin de ce niveau, tu seras capable de :
                             </p>
                             <div className="grid gap-1.5 sm:grid-cols-2">
                               {level.skills.map((skill) => (
@@ -397,7 +394,7 @@ export default function RoadmapPage() {
                               <span className="flex items-center gap-1 rounded-full border border-border bg-night-800 px-2.5 py-0.5 text-ink-dim">
                                 Prérequis :{" "}
                                 <span className="text-cyber-400">
-                                  ✓ {prev.title}
+                                   {prev.title}
                                 </span>
                               </span>
                             )}

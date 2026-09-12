@@ -12,7 +12,8 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge"
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -186,10 +187,7 @@ export default function CtfArenaPage() {
                               {CTF_CATEGORY_LABELS[challenge.category]}
                             </span>
                             <span>·</span>
-                            <span>
-                              {"★".repeat(challenge.difficulty)}
-                              {"☆".repeat(3 - challenge.difficulty)}
-                            </span>
+                            <DifficultyBadge stars={challenge.difficulty} />
                             <span>·</span>
                             <span className="text-cyber-400">
                               {challenge.points} pts
@@ -211,7 +209,7 @@ export default function CtfArenaPage() {
                           setResult(null);
                         }}
                       >
-                        {isSolved ? "Résolu ✓" : "Soumettre le flag"}
+                        {isSolved ? "Résolu " : "Soumettre le flag"}
                       </Button>
                     </CardContent>
                   </Card>
@@ -326,7 +324,7 @@ export default function CtfArenaPage() {
           <div className="space-y-3">
             {active?.hint && (
               <p className="rounded-md border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
-                💡 {active.hint}
+                 {active.hint}
               </p>
             )}
             <Input
