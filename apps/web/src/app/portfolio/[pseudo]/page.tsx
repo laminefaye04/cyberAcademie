@@ -19,7 +19,6 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BADGES } from "@/lib/badges";
 import { DEMO_USER } from "@/lib/mock";
-import { ROADMAP_LEVELS } from "@/lib/roadmap";
 import { Button } from "@/components/ui/button";
 import {
   CAREER_GOAL,
@@ -168,7 +167,7 @@ export default async function PortfolioPage({ params }: PortfolioPageProps) {
                 key={badge.id}
                 className="flex items-center gap-2 rounded-md border border-cyber-500/40 bg-night-800/60 px-3 py-2"
               >
-                <span className="text-xl">{badge.icon}</span>
+                <badge.icon className="h-4 w-4 text-cyber-500" />
                 <span className="text-sm">{badge.name}</span>
               </div>
             ))}

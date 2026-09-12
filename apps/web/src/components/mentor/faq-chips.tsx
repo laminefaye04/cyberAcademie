@@ -9,7 +9,15 @@ interface FaqChipsProps {
 
 export function FaqChips({ onSelect }: FaqChipsProps) {
   return (
-    <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+    <div
+      className="relative flex items-center gap-1.5 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:[-webkit-mask-image:none] sm:[mask-image:none]"
+      style={{
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent 0, black 1rem, black calc(100% - 1rem), transparent 100%)",
+        maskImage:
+          "linear-gradient(to right, transparent 0, black 1rem, black calc(100% - 1rem), transparent 100%)",
+      }}
+    >
       <MessageCircle className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
       {MENTOR_FAQS.map((question) => (
         <button

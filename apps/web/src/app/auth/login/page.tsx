@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { KeyRound, Loader2, Lock } from "lucide-react";
@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
@@ -145,5 +145,12 @@ export default function LoginPage() {
         2FA optionnelle disponible dans les paramètres du profil
       </div>
     </AuthShell>
+  );
+}
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground">Chargement…</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -48,13 +48,13 @@ export function getLearningPath(levelId: number): LearningPathItem[] {
       xp: course.xp,
     });
 
-    for (const module of course.modules) {
-      for (const lesson of module.lessons) {
+    for (const mod of course.modules) {
+      for (const lesson of mod.lessons) {
         if (lesson.type === "exercise") {
           items.push({
             kind: "exercise",
             title: lesson.title,
-            subtitle: `Exercice — ${module.title}`,
+            subtitle: `Exercice — ${mod.title}`,
             duration: lesson.duration,
             href: `/courses/${course.id}`,
             xp: EXERCISE_XP,
@@ -90,13 +90,13 @@ export function getLearningPath(levelId: number): LearningPathItem[] {
   }
 
   if (course) {
-    for (const module of course.modules) {
-      for (const lesson of module.lessons) {
+    for (const mod of course.modules) {
+      for (const lesson of mod.lessons) {
         if (lesson.type === "quiz") {
           items.push({
             kind: "quiz",
             title: lesson.title,
-            subtitle: `Quiz de validation — ${module.title}`,
+            subtitle: `Quiz de validation — ${mod.title}`,
             duration: lesson.duration,
             href: `/courses/${course.id}`,
             xp: QUIZ_XP,

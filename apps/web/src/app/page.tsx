@@ -363,7 +363,7 @@ export default function HomePage() {
                     key={badge.id}
                     className="flex items-center gap-2 rounded-md border border-cyber-500/40 bg-cyber-500/10 px-3 py-1.5 text-sm"
                   >
-                    <span>{badge.icon}</span> {badge.name}
+                    <badge.icon className="h-4 w-4 text-cyber-500" /> {badge.name}
                   </span>
                 ))}
                 {BADGES.filter((badge) => !badge.earned)

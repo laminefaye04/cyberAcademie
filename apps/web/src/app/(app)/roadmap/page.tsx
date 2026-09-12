@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { COURSES, getCourse } from "@/lib/courses";
+import { getCourse } from "@/lib/courses";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,7 +30,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { V1_LEVELS, levelStatus } from "@/lib/roadmap";
 import { LABS } from "@/lib/labs";
-import { BADGES } from "@/lib/badges";
 import { DEMO_USER } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
@@ -122,31 +121,7 @@ export default function RoadmapPage() {
     []
   );
 
-  function renderSkills(status: string, skills: string[]) {
-    return (
-      <div className="flex flex-wrap gap-1.5">
-        {skills.map((skill) => (
-          <span
-            key={skill}
-            className={cn(
-              "flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs",
-              status === "locked"
-                ? "border-border bg-night-900 text-muted-foreground"
-                : "border-cyber-500/40 bg-cyber-500/5 text-cyber-400"
-            )}
-          >
-            <span
-              className={cn(
-                "h-1.5 w-1.5 rounded-full",
-                status === "locked" ? "bg-muted-foreground" : "bg-cyber-500"
-              )}
-            />
-            {skill}
-          </span>
-        ))}
-      </div>
-    );
-  }
+
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
@@ -159,6 +134,9 @@ export default function RoadmapPage() {
           suivant.
         </p>
       </div>
+
+      {/* grille terminal decor */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_1px_1px,rgba(79,209,197,0.06)_1px,transparent_0)] bg-[size:24px_24px] opacity-60" />
 
       {/* ⭐ 1. Progression globale */}
       <Card className="mb-6 border-cyber-500/40 bg-gradient-to-br from-cyber-500/[0.08] to-transparent">
@@ -289,6 +267,15 @@ export default function RoadmapPage() {
                           status === "locked" ? "bg-border" : "bg-cyber-500/60"
                         )}
                       />
+                      {status === "in-progress" && (
+                        <motion.span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 rounded-full border border-cyber-500/50"
+                          initial={{ opacity: 0.6, scale: 1 }}
+                          animate={{ opacity: 0, scale: 1.5 }}
+                          transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut", delay: index * 0.04 + 0.1 }}
+                        />
+                      )}
                     </motion.div>
 
                     <div

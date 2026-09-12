@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Award,
   Globe,
@@ -20,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 import { BADGES } from "@/lib/badges";
 import { DEMO_USER } from "@/lib/mock";
 import { V1_LEVELS } from "@/lib/roadmap";
@@ -28,7 +30,6 @@ import {
   getCareerProgressPct,
   getCompletedLevelsCount,
   getGlobalProgressPct,
-  getMasteredSkills,
   getRankTitle,
   getTotalLevels,
 } from "@/lib/progress";
@@ -60,7 +61,6 @@ export default function ProfilePage() {
   const totalLevels = getTotalLevels();
   const globalPct = getGlobalProgressPct();
   const careerPct = getCareerProgressPct();
-  const masteredSkills = getMasteredSkills();
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6">
@@ -240,19 +240,24 @@ export default function ProfilePage() {
 
         <TabsContent value="badges" className="mt-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {BADGES.map((badge) => (
+            {BADGES.map((badge, index) => (
+              <motion.div
+                key={badge.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04, duration: 0.3, ease: "easeOut" }}
+              >
               <Card
                 key={badge.id}
                 className={badge.earned ? "border-cyber-500/50" : "opacity-80"}
               >
                 <CardContent className="flex items-start gap-4 p-5">
-                  <span
-                    className={`text-3xl ${
-                      badge.earned ? "" : "grayscale"
-                    }`}
-                  >
-                    {badge.icon}
-                  </span>
+                  <badge.icon
+                    className={cn(
+                      "h-8 w-8",
+                      badge.earned ? "text-cyber-500" : "text-muted-foreground grayscale"
+                    )}
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{badge.name}</p>
                     <p className="mt-1 text-sm text-ink-dim">
@@ -281,7 +286,8 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </TabsContent>

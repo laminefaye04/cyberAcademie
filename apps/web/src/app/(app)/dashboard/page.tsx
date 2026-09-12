@@ -242,7 +242,7 @@ export default function DashboardPage() {
               </div>
               <p className="mt-1 font-semibold">
                 Revoir {MENTOR_WEAKNESSES[0].label} — tu as obtenu{" "}
-                {MENTOR_WEAKNESSES[0].score}% aux derniers exercices
+                <span className="font-mono text-cyber-400">{MENTOR_WEAKNESSES[0].score}%</span> aux derniers exercices
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {MENTOR_WEAKNESSES.map((weakness) => (
@@ -255,7 +255,7 @@ export default function DashboardPage() {
                         "border-cyber-500/40 text-cyber-400"
                     )}
                   >
-                    {weakness.label} · {weakness.score}%
+                    {weakness.label} · <span className="font-mono">{weakness.score}%</span>
                   </Badge>
                 ))}
               </div>
@@ -513,7 +513,7 @@ export default function DashboardPage() {
               <CardContent className="space-y-2 p-4">
                 {BADGES.filter((badge) => badge.earned).map((badge) => (
                   <div key={badge.id} className="flex items-center gap-3">
-                    <span className="text-xl">{badge.icon}</span>
+                    <badge.icon className="h-4 w-4 text-cyber-500" />
                     <div>
                       <p className="text-sm font-medium">{badge.name}</p>
                       <p className="text-xs text-muted-foreground">
