@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
+import { MatrixRain } from "@/components/ui/matrix-rain";
 import { Brand } from "@/components/brand";
 
 export function AuthShell({
@@ -22,7 +23,8 @@ export function AuthShell({
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(11,61,145,0.25),transparent_50%)]"
       />
-      <div className="relative w-full max-w-md">
+      <MatrixRain className="opacity-40" />
+        <div className="relative w-full max-w-md">
         <div className="mb-6 flex justify-center">
           <Link href="/">
             <Brand />

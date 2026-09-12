@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowRight,
   Clock,
   Crosshair,
   FlaskConical,
@@ -13,7 +12,6 @@ import {
   Play,
   RotateCcw,
   Sparkles,
-  Star,
   Zap,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LABS, LAB_TYPE_LABELS, type LabType } from "@/lib/labs";
 import { EXTERNAL_LABS, EXTERNAL_PLATFORM_INFO } from "@/lib/externalLabs";
-import { ROADMAP_LEVELS, V1_LEVELS, type RoadmapLevel } from "@/lib/roadmap";
+import { ROADMAP_LEVELS, type RoadmapLevel } from "@/lib/roadmap";
 import {
   getCompletedLabIds,
   getCompletedExternalLabIds,

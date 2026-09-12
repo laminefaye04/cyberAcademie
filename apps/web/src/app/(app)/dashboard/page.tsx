@@ -226,7 +226,8 @@ export default function DashboardPage() {
       )}
 
       {/* ⭐ Coach — Ta priorité */}
-      <Card className="border-cyber-500/40 bg-cyber-500/[0.04]">
+      <Card variant="priority" className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(251,191,36,0.08)_1px,transparent_0)] bg-[size:24px_24px]" />
         <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-cyber-500/40 bg-cyber-500/10">
@@ -348,7 +349,19 @@ export default function DashboardPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Progress value={globalPct} className="h-2.5 bg-night-800" />
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0.85 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            style={{ transformOrigin: "left" }}
+            className="relative"
+          >
+            <Progress value={globalPct} className="h-2.5 bg-night-800" />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-cyber-500/25 to-cyber-300/25 blur-[2px]"
+            />
+          </motion.div>
           <div className="flex flex-wrap items-center gap-2">
             {V1_LEVELS.map((level) => {
               const status = DEMO_USER.completedLevels.includes(level.id)
@@ -395,40 +408,40 @@ export default function DashboardPage() {
           </div>
           <div className="space-y-3">
             {AI_RECOMMENDATIONS.map((reco, index) => {
-              const Icon = RECO_ICONS[reco.type];
-              return (
-                <motion.div
-                  key={reco.title}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="transition-colors hover:border-cyber-500/50">
-                    <CardContent className="flex items-start gap-4 p-4">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-cyber-500/40 bg-cyber-500/10">
-                        <Icon className="h-4 w-4 text-cyber-500" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium leading-snug">{reco.title}</p>
-                        <p className="mt-1 text-sm text-ink-dim">
-                          {reco.description}
-                        </p>
-                      </div>
-                      <Button
-                        asChild
-                        variant="ghost"
-                        size="sm"
-                        className="shrink-0 text-cyber-500 hover:text-cyber-400"
-                      >
-                        <Link href={reco.type === "lab" ? "/labs" : "/roadmap"}>
-                          Continuer <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+            const Icon = RECO_ICONS[reco.type];
+            return (
+              <motion.div
+                key={reco.title}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="transition-colors hover:border-cyber-500/50">
+                  <CardContent className="flex items-start gap-4 p-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-cyber-500/40 bg-cyber-500/10">
+                      <Icon className="h-4 w-4 text-cyber-500" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium leading-snug">{reco.title}</p>
+                      <p className="mt-1 text-sm text-ink-dim">
+                        {reco.description}
+                      </p>
+                    </div>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="shrink-0 text-cyber-500 hover:text-cyber-400"
+                    >
+                      <Link href={reco.type === "lab" ? "/labs" : "/roadmap"}>
+                        Continuer <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
           </div>
 
           {/* Skills map */}

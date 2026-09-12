@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { COURSES, getCourse } from "@/lib/courses";
 import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,7 +19,6 @@ import {
   Lock,
   MonitorPlay,
   Sparkles,
-  Star,
   Target,
   Trophy,
   Unlock,
@@ -29,7 +29,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { V1_LEVELS, levelStatus } from "@/lib/roadmap";
-import { COURSES, getCourse } from "@/lib/courses";
 import { LABS } from "@/lib/labs";
 import { BADGES } from "@/lib/badges";
 import { DEMO_USER } from "@/lib/mock";
